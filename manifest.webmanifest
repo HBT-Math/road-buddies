@@ -1,0 +1,18 @@
+{
+  "name": "Enrich Program - Rayhan School",
+  "short_name": "Road Buddies",
+  "description": "A driving game for practising addition and subtraction.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#FFFFFF",
+  "theme_color": "#7CC8FF",
+  "lang": "en",
+  "icons": [
+    { "src": "assets/branding/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/branding/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/branding/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

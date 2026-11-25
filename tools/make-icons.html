@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Make app icons</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 24px; color: #2B2140; }
+  .row { display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
+  figure { margin: 0; text-align: center; }
+  img { border: 1px solid #ccc; border-radius: 16px; }
+  .warn { color: #9B2C54; font-weight: 700; }
+</style>
+</head>
+<body>
+<h1>App icons from the Enrich Program logo</h1>
+<p>Open this page from the game's folder on a local server (for example <code>python3 -m http.server</code>, then
+<code>/tools/make-icons.html</code>). Right-click each icon and save it into <code>assets/branding/</code> with the name shown.
+The logo is placed untouched (no stretching, cropping or recolouring) on a white square with safe padding.</p>
+<p id="status"></p>
+<div class="row" id="out"></div>
+<script>
+// Exposed for tools/make-icons.cjs (headless) as well as manual use.
+window.makeIcons = async function makeIcons() {
+  const SIZES = [192, 512];
+  const PAD = 0.14; // >= 10% each side keeps the logo inside the maskable-icon safe zone
+  const logo = await new Promise((res) => {
+    const img = new Image();
+    img.onload = () => res(img);
+    img.onerror = () => res(null);
+    img.src = '../assets/branding/enrich-program-logo.png?' + Date.now();
+  });
+  const out = {};
+  for (const size of SIZES) {
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, size, size);
+    if (logo) {
+      const box = size * (1 - PAD * 2);
+      const k = Math.min(box / logo.naturalWidth, box / logo.naturalHeight); // contain, never stretch
+      const w = logo.naturalWidth * k, h = logo.naturalHeight * k;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(logo, (size - w) / 2, (size - h) / 2, w, h);
+    } else {
+      // Temporary placeholder until the logo file is added: a plain star, clearly not a logo.
+      ctx.fillStyle = '#FFD43B'; ctx.strokeStyle = '#E59F00'; ctx.lineWidth = size * 0.03;
+      ctx.beginPath();
+      for (let i = 0; i < 10; i++) {
+        const a = -Math.PI / 2 + i * Math.PI / 5, r = (i % 2 ? 0.16 : 0.34) * size;
+        ctx.lineTo(size / 2 + Math.cos(a) * r, size / 2 + Math.sin(a) * r);
+      }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+    out[size] = c.toDataURL('image/png');
+  }
+  return { fromLogo: !!logo, icons: out };
+};
+makeIcons().then(({ fromLogo, icons }) => {
+  document.getElementById('status').innerHTML = fromLogo
+    ? 'Made from <code>enrich-program-logo.png</code>.'
+    : '<span class="warn">Logo not found in assets/branding/. Showing a temporary placeholder.</span>';
+  for (const [size, url] of Object.entries(icons)) {
+    const f = document.createElement('figure');
+    f.innerHTML = `<img src="${url}" width="${Math.min(size, 256)}" height="${Math.min(size, 256)}" alt=""><figcaption><a download="icon-${size}.png" href="${url}">icon-${size}.png</a></figcaption>`;
+    document.getElementById('out').append(f);
+  }
+});
+</script>
+</body>
+</html>

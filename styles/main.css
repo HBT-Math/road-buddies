@@ -585,3 +585,21 @@ html.reduce-motion .bubble.show { animation: none !important; opacity: 1; }
   .race-results .result-buttons { position: absolute; right: 14px; bottom: 12px; flex-direction: column; gap: 8px; }
   .race-results .cup-story { margin-inline-end: 130px; }
 }
+
+/* ================= Number pad (Medium / Hard) ================= */
+.number-pad { --key: clamp(60px, 9vmin, 76px); position: absolute; z-index: 7; display: grid; grid-template-columns: repeat(3, var(--key)); gap: 8px;
+  background: rgba(255,255,255,.88); padding: 10px; border-radius: 26px; box-shadow: 0 6px 0 rgba(0,0,0,.12); }
+.pad-key { width: var(--key); height: var(--key); border: 0; border-radius: 18px; background: #fff; box-shadow: 0 4px 0 rgba(43,33,64,.25);
+  font-size: calc(var(--key) * .48); font-weight: 900; color: var(--ink); cursor: pointer; display: grid; place-items: center; }
+.pad-key:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(43,33,64,.25); }
+.pad-key svg { width: 55%; height: 55%; }
+.pad-ok { background: var(--good); color: #fff; }
+.pad-ok:disabled { background: #C9C3D9; cursor: default; }
+.race .number-pad { left: 14px; bottom: 14px; }
+.race.typing .steer, .race.typing .race-go { display: none; }
+.race.typing .race-chat { inset-inline-start: auto; inset-inline-end: 14px; top: 96px; bottom: auto; }
+@media (max-height: 520px) {
+  .number-pad { --key: 58px; gap: 5px; padding: 6px; border-radius: 20px; }
+  .race .number-pad { left: 8px; bottom: 8px; }
+  .race.typing .race-chat { top: 70px; }
+}

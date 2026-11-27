@@ -19,9 +19,10 @@ export const RACE = {
   nitro: { normal: { extra: 6, time: 2.2 }, super: { extra: 9, time: 3.2 } },
   maxNitro: 3,
   finishLinger: 2.2,
+  typeWaitAt: 7,            // typing mode: the whole race waits this far before the gate until an answer is typed
 };
 
-export function createRace({ step, difficulty = 'easy', range = 10, rivals, rng, hooks = {}, laps = RACE.laps }) {
+export function createRace({ step, difficulty = 'easy', range = 10, rivals, rng, hooks = {}, laps = RACE.laps, typed = () => false }) {
   const h = { onQuestion() {}, onAnswer() {}, onNitro() {}, onPass() {}, onPit: async () => true, onCount() {}, onGo() {}, onFinish() {}, onDone() {}, ...hooks };
   const length = RACE.lapLength * laps;
   const pitPos = Math.round(length / 2);
@@ -51,9 +52,9 @@ export function createRace({ step, difficulty = 'easy', range = 10, rivals, rng,
 
   function commit() { const g = current(); if (s.phase === 'race' && g && g.q && !g.result) g.committed = true; }
 
-  function resolve(g) {
+  function resolve(g, typedValue) {
     const p = s.player;
-    const value = g.values[p.lane + 1];
+    const value = typedValue ?? g.values[p.lane + 1];
     const correct = value === g.q.answer;
     g.result = { lane: p.lane, correct };
     s.answered++;
@@ -67,7 +68,7 @@ export function createRace({ step, difficulty = 'easy', range = 10, rivals, rng,
       startBoost(RACE.auto.extra, RACE.auto.time, 'auto');
     } else {
       p.streak = 0;
-      g.reveal = g.values.indexOf(g.q.answer);   // the right answer glows briefly
+      g.reveal = g.typed ? p.lane + 1 : g.values.indexOf(g.q.answer);   // the right answer glows briefly
     }
     h.onAnswer(g.q, { correct, value, nitroKind, streak: p.streak, lane: p.lane });
   }
@@ -108,7 +109,15 @@ export function createRace({ step, difficulty = 'easy', range = 10, rivals, rng,
       return true;
     },
     go: commit,
-    chooseLane(lane) { if (s.phase !== 'race') return; s.player.lane = lane; commit(); },
+    /** Number pad answer for the current gate. Returns true when it was accepted. */
+    answer(value) {
+      const g = current();
+      if (s.phase !== 'race' || !g || !g.q || g.result || !g.typed) return false;
+      g.committed = true;
+      resolve(g, value);
+      return true;
+    },
+    chooseLane(lane) { if (s.phase !== 'race') return; s.player.lane = lane; if (!current()?.typed) commit(); },
     useNitro() {
       const p = s.player;
       if (s.phase !== 'race' || !p.nitro.length) return null;
@@ -141,9 +150,12 @@ export function createRace({ step, difficulty = 'easy', range = 10, rivals, rng,
         g.q = makeQuestion(step, rng, s.history);
         s.history.push(g.q);
         g.values = makeGateValues(g.q, rng, { min: 0, max: range });
-        h.onQuestion(g.q, g.values, s.gateIdx);
+        g.typed = typed(g.q);
+        h.onQuestion(g.q, g.values, s.gateIdx, g.typed);
       }
-      const scale = s.phase === 'race' && asking() && !g.committed ? slow : 1;
+      const waiting = s.phase === 'race' && g?.typed && !g.result && g.pos - p.pos <= RACE.typeWaitAt;
+      s.waiting = waiting;   // no timer: with the number pad the road simply waits for an answer
+      const scale = waiting ? 0 : s.phase === 'race' && asking() && !g.committed ? slow : 1;
       const sdt = dt * scale;
 
       // player

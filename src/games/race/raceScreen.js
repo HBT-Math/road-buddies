@@ -3,7 +3,8 @@ import { icons } from '../../ui/icons.js';
 import { t } from '../../data/i18n/index.js';
 import { characters, getCharacter, faceSvg, bodySvg } from '../../data/characters.js';
 import { getColor } from '../../data/colors.js';
-import { getDifficulty } from '../../data/difficulty.js';
+import { getDifficulty, typesAnswer } from '../../data/difficulty.js';
+import { createNumberPad } from '../../ui/numberPad.js';
 import { getCup, RACES_PER_CUP } from '../../data/cups.js';
 import { getRacer, pickLine } from '../../data/racers.js';
 import { raceThemes } from '../../data/themes/raceThemes.js';
@@ -71,7 +72,13 @@ export function raceScreen(app, params) {
   const big = h('div.race-big', { 'aria-live': 'assertive' });
   const overlay = h('div.race-overlay');
   const live = h('div.sr-only', { 'aria-live': 'polite' });
-  const el = h('div.screen.play.race', {}, canvas, hud, lapBar, sign.el, chat, big, btnL, btnR, btnGo, btnNitro, overlay, live);
+  // Medium and Hard: type the answer on the number pad (the digits appear in the "?" box)
+  const pad = createNumberPad({
+    maxDigits: 2,
+    onChange: (text) => { const box = sign.el.querySelector('.q-box'); if (box && !box.classList.contains('solved')) box.textContent = text || '?'; },
+    onSubmit: (v) => { race.answer(v); },
+  });
+  const el = h('div.screen.play.race', {}, canvas, hud, lapBar, sign.el, chat, big, btnL, btnR, btnGo, btnNitro, overlay, pad.el, live);
 
   // ---------- engine ----------
   const renderer = createRenderer(canvas, theme);
@@ -95,17 +102,20 @@ export function raceScreen(app, params) {
 
   const race = createRace({
     step: stepCfg, difficulty, range: diff.range, rivals, rng,
+    typed: (q) => typesAnswer(diff, q),
     hooks: {
-      onQuestion(q, values, idx) {
+      onQuestion(q, values, idx, typed) {
         questionIdx = idx;
         sign.setQuestion(q, { mode: 'hidden' });
         sign.setVisible(true);
-        btnGo.hidden = false;
+        btnGo.hidden = typed;
+        if (typed) { pad.show(); el.classList.add('typing'); } else { pad.hide(); el.classList.remove('typing'); }
         speakQuestion();
         live.textContent = `${questionSpeech(q)} ${values.join(', ')}`;
       },
       onAnswer(q, { correct, nitroKind, streak, lane }) {
         btnGo.hidden = true;
+        pad.hide(); el.classList.remove('typing');
         const disc = renderer.gateDisc(lane) || { cx: renderer.car.x, cy: renderer.car.y - 80, r: 30 };
         if (correct) {
           sign.reveal(q);
@@ -138,6 +148,7 @@ export function raceScreen(app, params) {
         showBig(t('race.pitStop'), 'pit');
         await wait(900);
         if (destroyed) return true;
+        pad.hide(); el.classList.remove('typing');
         return pitStop(overlay, { total, rng, onStep: () => sound.play('pop') });
       },
       onFinish({ place, photoFinish }) {
@@ -228,7 +239,7 @@ export function raceScreen(app, params) {
     tap: (x, y) => {
       sound.unlock();
       const lane = renderer.hitTest(x, y);
-      if (lane !== null && race.asking) race.chooseLane(lane);
+      if (lane !== null && race.asking && !race.current()?.typed) race.chooseLane(lane);
       else steer(x < renderer.size.W / 2 ? -1 : 1);
     },
   });
@@ -264,7 +275,9 @@ export function raceScreen(app, params) {
   function view() {
     const s = race.state, p = s.player;
     const g = race.current();
-    const gateView = g && g.q && g.pos - p.pos < RACE.showAt + 6 ? { d: g.pos - p.pos, values: g.values, result: g.result, reveal: g.reveal, q: g.q } : null;
+    // typing mode: the gates show "?" until answered, then the right answer on the car's lane
+    const typedValues = g?.typed ? (g.result ? [0, 1, 2].map((i) => (i === g.result.lane + 1 ? g.q.answer : '')) : ['?', '?', '?']) : null;
+    const gateView = g && g.q && g.pos - p.pos < RACE.showAt + 6 ? { d: g.pos - p.pos, values: typedValues || g.values, result: g.result, reveal: g.reveal, q: g.q } : null;
     for (const sc of scenery) {
       if (sc.pos - p.pos < -2.5) {
         const k = pickType();
@@ -339,7 +352,7 @@ export function raceScreen(app, params) {
     el,
     destroy() {
       destroyed = true;
-      loop.destroy(); input.destroy(); ro.disconnect(); speech.stop(); music.stop();
+      loop.destroy(); input.destroy(); ro.disconnect(); speech.stop(); music.stop(); pad.destroy();
       window.removeEventListener('keydown', onKey);
     },
     debug: { race, renderer },

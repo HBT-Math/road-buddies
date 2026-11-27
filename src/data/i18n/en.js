@@ -157,6 +157,10 @@ export default {
   'race.newExtra': 'New for your car!',
   'race.newPage': 'New story page!',
   'album.title': 'Sticker album',
+  'pad.label': 'Number pad',
+  'pad.delete': 'Delete',
+  'pad.go': 'Go',
+  'race.typeIt': 'Type the answer!',
   'adult.twoPlayers': 'Race: 2 players take turns',
   'adult.hardTimer': 'Race on Hard: show a race clock',
 

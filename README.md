@@ -102,6 +102,9 @@ Each has 3 steps. A step unlocks with 1 star on the step before; an adult can se
   (3 right in a row = super nitro, Shift key or the NITRO button), a pit stop half way (pick the 2 tires
   that make 10, or 20 on Hard), and rivals that adapt their speed so the race stays close.
   `tests/race.test.js` simulates whole races to check it is never impossible and never boring.
+- **Answering:** Easy = choose a gate. Medium and Hard = type the answer on the big number pad
+  (or the keyboard's number keys); the gates show "?" and the road waits at the gate until an answer is typed.
+  This is the `answer: 'choose' | 'type'` field in `src/data/difficulty.js`. "Which is bigger?" questions are always chosen.
 - On Easy and Medium the whole race slows down while a question is up; there is never a timer.
   On Hard a grown-up can switch on a race clock (best times are saved).
 - Grown-ups can switch on **2 players**: children take turns on one tablet, each with their own stars.

@@ -124,3 +124,31 @@ test('pit stop tires: exactly one pair makes the total, never n + n, always fini
     for (const v of tires) assert.ok(v >= 1 && v < total);
   }
 });
+
+import { typesAnswer } from '../src/data/difficulty.js';
+test('number pad: Medium and Hard type, Easy chooses; the road waits for a typed answer', async () => {
+  const easy = difficulties[0], medium = difficulties[1], hard = difficulties[2];
+  assert.equal(typesAnswer(easy, { answer: 7 }), false);
+  assert.equal(typesAnswer(medium, { answer: 7 }), true);
+  assert.equal(typesAnswer(hard, { answer: 'left', choices: ['a', '=', 'b'] }), false, 'compare is always chosen');
+
+  const rng = createRng(4);
+  const race = createRace({ step: { ...medium.steps[0], pitTotal: 10 }, difficulty: 'medium', range: 15, rivals: racers.slice(0, 3), rng,
+    typed: (q) => typesAnswer(medium, q) });
+  race.begin();
+  for (let i = 0; i < 60 * 30; i++) race.update(1 / 60);   // 30 s with no answer at all
+  const s = race.state, g = race.current();
+  assert.ok(g.typed && !g.result, 'still waiting at the first gate');
+  assert.ok(s.waiting);
+  assert.ok(g.pos - s.player.pos <= 7 + 0.5, 'car stopped before the gate');
+  const lead = Math.max(...s.rivals.map((r) => r.pos)) - s.player.pos;
+  assert.ok(lead < 30, 'rivals wait too');
+  assert.equal(race.answer(g.q.answer + 1), true);
+  assert.equal(g.result.correct, false);
+  for (let i = 0; i < 60 * 20 && race.current() === g; i++) race.update(1 / 60);
+  const g2 = race.current();
+  for (let i = 0; i < 60 * 20 && !(g2.q && race.state.waiting); i++) race.update(1 / 60);
+  assert.equal(race.answer(g2.q.answer), true);
+  assert.equal(g2.result.correct, true);
+  assert.equal(race.state.player.nitro.length, 1, 'typed right answer gives nitro');
+});

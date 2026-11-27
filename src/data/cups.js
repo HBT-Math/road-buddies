@@ -13,7 +13,7 @@ export const cups = {
       'Bolt Betty found her shiny mirror next to a happy cactus.', 'mirror'),
     cup('easy-3', 'snow', ['grumble', 'zippy', 'pip'], 'grumble', 'Snowy Hills Cup',
       'Hmph. My warm scarf blew away up the snowy hills.',
-      'Grumble got his warm scarf back and smiled a big truck smile.', 'scarf'),
+      'Grumble got the warm scarf back and smiled a big truck smile.', 'scarf'),
   ],
   medium: [
     cup('medium-1', 'sunny', ['zippy', 'betty', 'wheelie'], 'zippy', 'Rainbow Road Cup',

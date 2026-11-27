@@ -31,14 +31,17 @@ export function iconButton(icon, label, onClick, cls = '') {
  * If the file is missing, a plain text placeholder is shown instead (never a redrawn logo).
  */
 export function logo(kind = 'enrich', cls = '') {
-  const src = kind === 'school' ? branding.schoolLogo : branding.enrichLogo;
-  const alt = kind === 'school' ? `${branding.schoolName} ${branding.schoolNameAr}` : `${branding.programName}, ${branding.schoolName}`;
-  const panel = h(`div.logo-panel.logo-${kind}${cls ? '.' + cls : ''}`, { 'aria-hidden': kind === 'corner' ? 'true' : null });
+  const src = { school: branding.schoolLogo, opening: branding.openingSchoolLogo }[kind] || branding.enrichLogo;
+  const isSchool = kind === 'school' || kind === 'opening';
+  const alt = isSchool ? `${branding.schoolName} ${branding.schoolNameAr}` : `${branding.programName}, ${branding.schoolName}`;
+  // a logo with a black background goes on a dark rounded plate, never straight onto a light screen
+  const plate = branding.darkPlateLogos?.includes(src) ? '.logo-dark-plate' : '';
+  const panel = h(`div.logo-panel.logo-${kind}${plate}${cls ? '.' + cls : ''}`);
   const img = h('img', { src, alt, draggable: 'false' });
   img.addEventListener('error', () => {
     img.remove();
     panel.classList.add('logo-missing');
-    panel.append(h('span.logo-text', {}, kind === 'school' ? branding.schoolName : t('about.line')));
+    panel.append(h('span.logo-text', {}, isSchool ? branding.schoolName : t('about.line')));
   });
   panel.append(img);
   return panel;

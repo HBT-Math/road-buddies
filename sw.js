@@ -1,16 +1,18 @@
 // Offline support. Bump VERSION whenever files change so devices pick up the update.
 // tests/pwa.test.js checks that every file under src/ and styles/ is listed in PRECACHE.
-const VERSION = 'rb-v1';
+const VERSION = 'rb-v3';
 const PRECACHE = [
   './',
   'index.html',
   'manifest.webmanifest',
+  'styles/main.css',
   'src/audio/music.js',
   'src/audio/sound.js',
   'src/audio/speech.js',
   'src/data/branding.js',
   'src/data/characters.js',
   'src/data/colors.js',
+  'src/data/difficulty.js',
   'src/data/i18n/ar.js',
   'src/data/i18n/en.js',
   'src/data/i18n/index.js',
@@ -25,6 +27,8 @@ const PRECACHE = [
   'src/engine/particles.js',
   'src/engine/road.js',
   'src/engine/world.js',
+  'src/games/art.js',
+  'src/games/registry.js',
   'src/main.js',
   'src/math/distractors.js',
   'src/math/generator.js',
@@ -38,15 +42,16 @@ const PRECACHE = [
   'src/ui/icons.js',
   'src/ui/screens/adult.js',
   'src/ui/screens/adultGate.js',
+  'src/ui/screens/home.js',
+  'src/ui/screens/levels.js',
   'src/ui/screens/map.js',
   'src/ui/screens/newProfile.js',
   'src/ui/screens/play.js',
+  'src/ui/screens/presents.js',
   'src/ui/screens/profiles.js',
   'src/ui/screens/results.js',
-  'src/ui/screens/splash.js',
   'src/ui/signboard.js',
   'src/ui/tenframe.js',
-  'styles/main.css',
   'assets/branding/icon-192.png',
   'assets/branding/icon-512.png',
 ];

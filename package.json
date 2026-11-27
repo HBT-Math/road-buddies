@@ -8,6 +8,7 @@
     "test": "node --test tests/*.test.js",
     "start": "python3 -m http.server 8080",
     "e2e": "node tests/e2e/smoke.cjs",
-    "icons": "node tools/make-icons.cjs"
+    "icons": "node tools/make-icons.cjs",
+    "precache": "node tools/update-precache.mjs"
   }
 }

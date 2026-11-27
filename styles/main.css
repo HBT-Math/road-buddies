@@ -350,3 +350,77 @@ html.reduce-motion .bubble.show { animation: none !important; opacity: 1; }
 
 .confetti { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; }
 .sign-wrap.hidden { display: none; }
+
+/* ================= Game hub (step 1) ================= */
+.logo-dark-plate { background: #1E1B24 !important; } /* black-background logos only ever sit on a dark plate */
+.corner-home { position: absolute; top: 14px; inset-inline-start: 14px; z-index: 3; }
+@media (max-height: 520px) { .corner-home { top: 8px; } }
+.map .who { inset-inline-start: 100px; }
+
+/* opening "presents" */
+.presents { background: #fff; display: grid; place-items: center; overflow: hidden; cursor: pointer; transition: opacity 300ms; }
+.presents.fade-out { opacity: 0; }
+.pres-stage { display: flex; align-items: center; justify-content: center; gap: clamp(24px, 6vw, 80px); }
+.pres-item { display: flex; flex-direction: column; align-items: center; gap: 14px; animation: pres-in calc(700ms * var(--dur)) ease-out both; }
+.phase-1 .pres-enrich, .phase-2 .pres-school { display: none; }
+.pres-text { margin: 0; font-size: clamp(20px, 3.4vmin, 30px); font-weight: 700; color: var(--ink-soft); letter-spacing: .02em; }
+.logo-opening { width: 224px; height: 90px; padding: 0; background: transparent; }      /* small logo: at most 1.5x, never stretched */
+.logo-opening-enrich { width: min(40vmin, 300px); aspect-ratio: 1; padding: 0; }
+.phase-3 .logo-opening-enrich { width: min(30vmin, 220px); }
+@keyframes pres-in { from { opacity: 0; transform: translateY(12px) scale(.96); } }
+.pres-car { position: absolute; bottom: 12%; left: 0; width: min(36vmin, 260px); transform: translateX(-120%); }
+.pres-car svg { width: 100%; height: auto; display: block; overflow: visible; }
+.pres-car.go { animation: zoom-across 800ms cubic-bezier(.5, 0, .7, 1) forwards; }
+@keyframes zoom-across { to { transform: translateX(calc(100vw + 40%)); } }
+
+/* home hub */
+.home { gap: 3vh; padding-bottom: 110px; }
+.home .who { position: absolute; top: 14px; inset-inline-start: 14px; padding: 0; background: transparent; box-shadow: none; }
+.hub-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 2.4vw, 26px); width: min(100%, 1100px); }
+.hub-card { border: 0; background: var(--panel); border-radius: 28px; box-shadow: var(--shadow); padding: 12px 12px 16px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; min-height: 64px;
+  transition: transform calc(150ms * var(--dur)); }
+.hub-card:active { transform: scale(.96); }
+.hub-art svg { width: 100%; height: auto; display: block; border-radius: 18px; }
+.hub-art { width: 100%; }
+.hub-name { font-weight: 800; font-size: clamp(18px, 2.6vmin, 26px); }
+.hub-card.soon .hub-art { opacity: .55; filter: grayscale(.4); }
+.hub-soon { position: absolute; top: 10px; inset-inline-end: 10px; background: var(--ink); color: #fff; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+.wiggle { animation: wiggle calc(400ms * var(--dur)); }
+@keyframes wiggle { 25% { transform: rotate(-3deg); } 75% { transform: rotate(3deg); } }
+.home-footer { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 14px; align-items: center; }
+.logo-footer-school { width: 149px; height: 60px; padding: 4px 10px; box-sizing: content-box; }
+.logo-footer-enrich { width: 60px; height: 60px; padding: 4px; box-sizing: content-box; }
+@media (max-width: 700px) and (orientation: portrait) { .hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-height: 520px) {
+  .home { padding: 70px 16px 84px; }
+  .hub-card { padding: 8px 8px 10px; gap: 4px; border-radius: 22px; }
+  .hub-grid { width: min(100%, 760px); }
+  .home .who { top: 8px; }
+  .logo-footer-school { width: 112px; height: 45px; }
+  .logo-footer-enrich { width: 45px; height: 45px; }
+  .home-footer { bottom: 8px; }
+}
+
+/* level picker */
+.levels { gap: 3vh; }
+.title-art svg { width: 84px; height: auto; display: block; border-radius: 12px; }
+.diff-row { display: flex; gap: clamp(10px, 2vw, 22px); flex-wrap: wrap; justify-content: center; }
+.diff-btn { min-width: 150px; min-height: 88px; border: 0; border-radius: 24px; background: var(--panel); box-shadow: var(--shadow); cursor: pointer;
+  display: flex; align-items: center; gap: 10px; padding: 10px 22px; font-size: 24px; font-weight: 800; }
+.diff-icon svg { width: 44px; height: 44px; display: block; }
+.diff-easy .diff-icon { color: #2F9E6B; } .diff-medium .diff-icon { color: #E07A1F; } .diff-hard .diff-icon { color: #8E5CD9; }
+.diff-btn[aria-pressed="true"] { outline: 6px solid var(--ink); outline-offset: 3px; }
+.diff-easy[aria-pressed="true"] { background: #E3F8EC; } .diff-medium[aria-pressed="true"] { background: #FFF0DC; } .diff-hard[aria-pressed="true"] { background: #F0E8FF; }
+.step-row { display: flex; gap: clamp(20px, 5vw, 60px); align-items: flex-end; justify-content: center; }
+.step-node { background: #fff !important; }
+.step-node .world-icon svg { width: 80%; border-radius: 10px; }
+@media (max-height: 520px) {
+  .levels { gap: 10px; padding-top: 64px; }
+  .diff-btn { min-height: 64px; min-width: 120px; font-size: 20px; padding: 6px 16px; }
+  .title-art svg { width: 56px; }
+}
+
+/* adult: levels per game */
+.level-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 6px 0; }
+.level-game { min-width: 130px; font-weight: 700; }

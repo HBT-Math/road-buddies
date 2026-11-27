@@ -6,7 +6,9 @@ import { packs, getPack } from '../../data/packs/index.js';
 import { getCharacter } from '../../data/characters.js';
 import { profileBadge } from './profiles.js';
 import { starsRow } from './map.js';
-import { worldStars } from '../../save/store.js';
+import { worldStars, gameLevel } from '../../save/store.js';
+import { games } from '../../games/registry.js';
+import { difficulties } from '../../data/difficulty.js';
 
 // Grown-ups screen. Reached by holding the gear 3 s, or by answering the adult question.
 // Text-based on purpose (adults read); every string still comes from the translation files.
@@ -91,8 +93,19 @@ export function adult(app) {
           render();
         }) : null));
 
+    // level per hub game (Easy / Medium / Hard)
+    const levelRows = games.filter((g) => g.levels).map((g) => {
+      const seg = h('div.seg');
+      for (const d of difficulties) {
+        seg.append(h('button.seg-btn', { type: 'button', 'aria-pressed': String(gameLevel(p, g.id) === d.id),
+          onclick: () => { store.setGameLevel(p.id, g.id, d.id); render(); } }, t(d.nameKey)));
+      }
+      return h('div.level-row', {}, h('span.level-game', {}, t(g.nameKey)), seg);
+    });
+
     return section(t('adult.players'),
       row,
+      h('h3', {}, t('adult.gameLevels')), ...levelRows,
       h('h3', {}, t('adult.pack')), packRow,
       h('h3', {}, t('adult.progress')), h('div.table-wrap', {}, table),
       toggle(t('adult.unlockAll'), p.unlockAll, (v) => store.updateProfile(p.id, { unlockAll: v })),
@@ -120,6 +133,7 @@ export function adult(app) {
       toggle(t('adult.calm'), s.calm, (v) => set({ calm: v })),
       toggle(t('adult.reducedMotion'), s.reducedMotion, (v) => set({ reducedMotion: v })),
       toggle(t('adult.highContrast'), s.highContrast, (v) => set({ highContrast: v })),
+      toggle(t('adult.presentsVoice'), s.presentsVoice, (v) => set({ presentsVoice: v })),
       h('h3', {}, t('adult.language')), lang);
   }
 

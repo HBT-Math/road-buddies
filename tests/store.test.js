@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createStore, isWorldUnlocked, MAX_PROFILES, STORAGE_KEY } from '../src/save/store.js';
+import { createStore, isWorldUnlocked, MAX_PROFILES, STORAGE_KEY, isStepUnlocked, gameStars, gameLevel } from '../src/save/store.js';
 import { pack1 } from '../src/data/packs/pack1.js';
 
 const memStorage = () => {
@@ -20,7 +20,7 @@ test('profiles persist and are limited to 6', () => {
 test('profiles hold no personal data, only animal + colour', () => {
   const s = createStore(memStorage());
   const p = s.addProfile({ animal: 'cat', color: 'red', theme: 'cars' });
-  assert.deepEqual(Object.keys(p).sort(), ['animal', 'color', 'id', 'pack', 'progress', 'rewards', 'skills', 'theme']);
+  assert.deepEqual(Object.keys(p).sort(), ['animal', 'color', 'gameLevel', 'games', 'id', 'pack', 'progress', 'rewards', 'skills', 'stickers', 'theme']);
 });
 
 test('best stars are kept and unlock the next world', () => {
@@ -61,4 +61,33 @@ test('adult override: unlock all, or start at a later world', () => {
   assert.equal(isWorldUnlocked(p, pack1, 6), true);
   s.resetProgress(p.id);
   assert.equal(isWorldUnlocked(p, pack1, 1), false);
+});
+
+test('hub games save stars per game, difficulty and step; steps unlock with stars', () => {
+  const s = createStore(memStorage());
+  const p = s.addProfile({ animal: 'panda', color: 'blue', theme: 'cars' });
+  assert.equal(gameLevel(p, 'race'), 'easy');
+  s.setGameLevel(p.id, 'race', 'hard');
+  assert.equal(gameLevel(p, 'race'), 'hard');
+  assert.equal(gameLevel(p, 'maze'), 'easy', 'level is saved per game');
+  assert.equal(isStepUnlocked(p, 'race', 'hard', 1), false);
+  s.recordGame(p.id, 'race', 'hard', 0, { stars: 2 });
+  s.recordGame(p.id, 'race', 'hard', 0, { stars: 1 });
+  assert.equal(gameStars(p, 'race', 'hard', 0), 2);
+  assert.equal(isStepUnlocked(p, 'race', 'hard', 1), true);
+  assert.equal(isStepUnlocked(p, 'maze', 'hard', 1), false, 'progress is per game');
+  assert.equal(s.addSticker(p.id, 'race-cup1'), true);
+  assert.equal(s.addSticker(p.id, 'race-cup1'), false);
+});
+
+test('old saves with replaced animals keep their progress', () => {
+  const mem = memStorage();
+  mem.setItem(STORAGE_KEY, JSON.stringify({ version: 1, settings: {}, activeId: 'a', profiles: [
+    { id: 'a', animal: 'frog', color: 'red', progress: { pack1: { p1w1: { stars: 3 } } }, skills: {}, rewards: 5 },
+    { id: 'b', animal: 'fox', color: 'blue', progress: {}, skills: {}, rewards: 0 },
+    { id: 'c', animal: 'hippo', color: 'blue', progress: {}, skills: {}, rewards: 0 }] }));
+  const s = createStore(mem);
+  assert.deepEqual(s.profiles().map((p) => p.animal), ['panda', 'giraffe', 'hippo']);
+  assert.equal(s.profiles()[0].progress.pack1.p1w1.stars, 3);
+  assert.deepEqual(s.profiles()[0].games, {});
 });

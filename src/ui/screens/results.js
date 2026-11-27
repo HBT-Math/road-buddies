@@ -1,4 +1,4 @@
-import { h, iconButton, logo } from '../dom.js';
+import { h, iconButton } from '../dom.js';
 import { icons } from '../icons.js';
 import { getPack } from '../../data/packs/index.js';
 import { getCharacter, bodySvg } from '../../data/characters.js';
@@ -27,8 +27,7 @@ export function results(app, { worldIndex = 0, result, placement = false }) {
         h('h1.title', {}, t('result.title')),
         stars,
         h('div.reward-total.inline', {}, h('span', { html: app.theme().reward.icon }), h('b', {}, `+${result.rewards}`)))),
-    buttons,
-    logo('school', 'logo-bottom'));
+    buttons);
   const shown = placement ? 3 : result.stars;
   const timers = [];
   for (let i = 0; i < shown; i++) timers.push(setTimeout(() => sound.play('star'), 150 + i * 250));

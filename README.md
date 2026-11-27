@@ -1,7 +1,11 @@
 # Road Buddies
 
-A touch-first driving game for practising addition and subtraction (ages 5-8).
+A touch-first game hub for practising addition and subtraction (ages 5-8).
 **Enrich Program, Rayhan School** (مدرسة الريحان).
+
+The app opens with a short "Rayhan School presents" opening (once per launch, tap to skip),
+then the home hub with four games: **Road Buddies** (the original ten-frame driving game),
+**Race**, **Maze** and **Color by Code**. One buddy and colour per child is shared by all games.
 
 The child steers a car between 3 lanes and drives through the gate showing the right answer.
 There are no timers, no crashes and no lose screen. The road stops at every gate and waits.
@@ -38,15 +42,19 @@ Add `?debug` to the URL to expose `window.roadBuddies` for testing.
 
 The game is a PWA. After the first visit over http(s), `sw.js` caches every file and the game runs with no
 internet. On tablets, use "Add to Home Screen" to install it full-screen.
-**When you change any file, bump `VERSION` in `sw.js`** so devices fetch the update. If you add a file, add it to
-`PRECACHE` (the test suite fails if you forget).
+**When you add or change files, run `npm run precache`**: it rewrites the file list in `sw.js` and bumps its
+`VERSION` so devices fetch the update (the test suite fails if the list is out of date).
 
 ## Branding
 
 Put the two logo files in `assets/branding/`:
 
-- `enrich-program-logo.png`
-- `rayhan-school-logo.png`
+- `enrich-program-logo.png` (square, white background)
+- `rayhan-school-logo.png` (small, transparent: opening, home footer, About)
+- `rayhan-school-logo-large-BLACKBG.jpg` (black background: only ever shown on a dark plate)
+
+To use a big transparent school logo on the opening, change the one line `openingSchoolLogo` in `src/data/branding.js`.
+Logos appear only on the opening, the home footer and the grown-ups / About screen; never during gameplay.
 
 The paths live in `src/data/branding.js`. Logos are shown as-is (`object-fit: contain`) on a white panel.
 If a file is missing, a plain text placeholder shows instead.
@@ -68,6 +76,21 @@ src/
 tests/      node:test suites
 ```
 
+## Add a game to the hub
+
+1. Make a folder `src/games/<id>/` with the game's screen.
+2. Add one entry to `src/games/registry.js`: `{ id, nameKey, art, ready, levels, start(app, { difficulty, step }) }`.
+   With `levels: true` the game gets the shared Easy / Medium / Hard picker and saves stars per difficulty and step.
+3. Add `game.<id>` to the translation files and run `npm run precache`.
+
+No other game needs to change.
+
+## Difficulty levels (Race, Maze, Color by Code)
+
+`src/data/difficulty.js` holds Easy (within 10, starting from 5, bonds of 10), Medium (within 15, make ten,
+missing number) and Hard (within 20, subtraction across ten, chains like 8 + 5 − 3, compare, "which one makes 12").
+Each has 3 steps. A step unlocks with 1 star on the step before; an adult can set the level per game or unlock everything.
+
 ## Add a character
 
 Add one entry to `src/data/characters.js`:
@@ -82,7 +105,8 @@ Add one entry to `src/data/characters.js`:
 }
 ```
 
-Then add `'animal.owl'` to the i18n files. The pickers, the roadside friends and the car all pick it up automatically.
+Then add `'animal.owl'` to the i18n files. If you remove an animal, map its old id in `ANIMAL_RENAMES`
+(`src/save/store.js`) so saved players keep their progress. The pickers, the roadside friends and the car all pick it up automatically.
 
 ## Add a theme
 

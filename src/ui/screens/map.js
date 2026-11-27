@@ -1,4 +1,4 @@
-import { h, iconButton, logo } from '../dom.js';
+import { h, iconButton } from '../dom.js';
 import { icons } from '../icons.js';
 import { getPack } from '../../data/packs/index.js';
 import { isWorldUnlocked, worldStars } from '../../save/store.js';
@@ -37,7 +37,7 @@ export function map(app) {
 
   const who = h('button.btn.who', { type: 'button', 'aria-label': t('pick.profile'), onclick: () => app.go('profiles') }, profileBadge(profile, 76));
   const el = h('div.screen.menu.map', {},
-    logo('enrich', 'logo-corner'),
+    iconButton(icons.home, t('btn.home'), () => app.go('home'), 'corner-home'),
     who,
     h('div.reward-total', {}, h('span', { html: app.theme().reward.icon }), h('b', {}, String(profile.rewards))),
     path);

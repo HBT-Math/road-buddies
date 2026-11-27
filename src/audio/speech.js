@@ -32,7 +32,7 @@ export const speech = {
    * voiceStyle: { pitch, rate } from character data.
    * opts.queue = true waits for current speech instead of interrupting it.
    */
-  say(text, voiceStyle = {}, { queue = false } = {}) {
+  say(text, voiceStyle = {}, { queue = false, volume = 1 } = {}) {
     if (!synth || !enabled || sound.muted || sound.volume <= 0 || !text || document.hidden) return;
     if (!queue) synth.cancel();
     const lang = getLanguage();
@@ -42,7 +42,7 @@ export const speech = {
     u.lang = v?.lang || (lang === 'ar' ? 'ar-SA' : 'en-US');
     u.pitch = Math.min(2, Math.max(0.5, voiceStyle.pitch ?? 1.1));
     u.rate = Math.min(1.2, Math.max(0.7, (voiceStyle.rate ?? 1) * 0.88)); // a little slower for young listeners
-    u.volume = Math.max(0, Math.min(1, sound.volume));
+    u.volume = Math.max(0, Math.min(1, sound.volume * volume));
     u.onstart = () => music.duck(true);
     u.onend = u.onerror = () => { if (!synth.speaking) music.duck(false); };
     synth.speak(u);

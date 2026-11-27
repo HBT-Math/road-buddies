@@ -28,12 +28,16 @@ server.listen(0, async () => {
   try {
     await page.goto(url);
     check(await page.title() === 'Enrich Program - Rayhan School', 'page title');
-    await page.waitForSelector('.splash img');
+    await page.waitForSelector('.presents img');
+    check(await page.locator('.presents img').count() >= 1, 'opening shows the logos');
     await page.mouse.click(5, 5);
     await page.locator('.face-card').first().click();
     await page.locator('.swatch').nth(3).click();
     await page.locator('.big-go').click({ force: true });
     await page.locator('.theme-card').first().click();
+    await page.waitForSelector('.hub-card');
+    check(await page.locator('.hub-card').count() === 4, 'home hub shows 4 games');
+    await page.locator('.hub-card').first().click();
     await page.waitForSelector('.world-node');
     check(await page.locator('.world-node').count() === 7, 'world map shows 7 worlds');
     await page.locator('.world-node').first().click({ force: true });
@@ -63,9 +67,9 @@ server.listen(0, async () => {
     await page.waitForFunction(() => navigator.serviceWorker.controller, null, { timeout: 10000 });
     await context.setOffline(true);
     await page.reload();
-    await page.waitForSelector('.splash', { timeout: 10000 });
+    await page.waitForSelector('.presents', { timeout: 10000 });
     await page.mouse.click(5, 5);
-    await page.waitForSelector('.pick-card', { timeout: 5000 });
+    await page.waitForSelector('.hub-card', { timeout: 5000 });
     check(true, 'game loads and runs offline');
     await context.setOffline(false);
     check(errors.length === 0, `no page errors${errors.length ? ': ' + errors.join(' | ') : ''}`);

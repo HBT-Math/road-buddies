@@ -6,7 +6,9 @@ import { sound } from './audio/sound.js';
 import { speech } from './audio/speech.js';
 import { music } from './audio/music.js';
 import { createChrome } from './ui/chrome.js';
-import { splash } from './ui/screens/splash.js';
+import { presents } from './ui/screens/presents.js';
+import { home } from './ui/screens/home.js';
+import { levels } from './ui/screens/levels.js';
 import { profiles } from './ui/screens/profiles.js';
 import { newProfile } from './ui/screens/newProfile.js';
 import { map } from './ui/screens/map.js';
@@ -15,7 +17,7 @@ import { results } from './ui/screens/results.js';
 import { adult } from './ui/screens/adult.js';
 import { adultGate } from './ui/screens/adultGate.js';
 
-const screens = { splash, profiles, newProfile, map, play, results, adult, adultGate };
+const screens = { presents, home, levels, profiles, newProfile, map, play, results, adult, adultGate };
 const root = document.getElementById('app');
 const store = createStore();
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -39,9 +41,9 @@ const app = {
   },
   back() {
     let prev = history.pop();
-    while (prev && ['adult', 'adultGate', 'splash'].includes(prev.name)) prev = history.pop();
+    while (prev && ['adult', 'adultGate', 'presents'].includes(prev.name)) prev = history.pop();
     if (prev && !['play', 'results'].includes(prev.name)) app.go(prev.name, prev.params);
-    else app.go(store.active() ? 'map' : 'profiles');
+    else app.go(store.active() ? 'home' : 'profiles');
     history.pop(); // don't stack the screen we just left
   },
   applySettings() {
@@ -72,7 +74,8 @@ if (debug) window.roadBuddies = { app, store };
 // Unlock audio on the very first touch anywhere (browser autoplay rule).
 window.addEventListener('pointerdown', () => sound.unlock(), { once: true });
 
-app.go('splash');
+// The opening plays once per launch, then goes to the hub (or to the player picker the first time).
+app.go('presents', { next: store.active() ? 'home' : store.profiles().length ? 'profiles' : 'newProfile' });
 
 // Offline support (PWA). Only over http(s); opening the file directly skips it.
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {

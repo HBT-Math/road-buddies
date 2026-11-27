@@ -1,4 +1,4 @@
-import { h, iconButton, logo } from '../dom.js';
+import { h, iconButton } from '../dom.js';
 import { icons, shapeSvg } from '../icons.js';
 import { characters, faceSvg, getCharacter } from '../../data/characters.js';
 import { accentColors, getColor } from '../../data/colors.js';
@@ -19,7 +19,7 @@ export function newProfile(app) {
   }, 'back-btn');
   if (!app.store.profiles().length) backBtn.hidden = true;
   const dots = h('div.step-dots', { 'aria-hidden': 'true' });
-  const el = h('div.screen.menu', {}, logo('enrich', 'logo-corner'), body, dots, backBtn);
+  const el = h('div.screen.menu', {}, body, dots, backBtn);
 
   function show(n) {
     step = n;
@@ -89,7 +89,7 @@ export function newProfile(app) {
           sound.play('select');
           pick.theme = th.id;
           app.store.addProfile(pick);
-          app.go('map');
+          app.go('home');
         },
       }, h('span.theme-art', { html: th.icon })));
     }

@@ -1,4 +1,4 @@
-import { h, iconButton, logo } from '../dom.js';
+import { h, iconButton } from '../dom.js';
 import { icons, shapeSvg } from '../icons.js';
 import { getCharacter, faceSvg } from '../../data/characters.js';
 import { getColor } from '../../data/colors.js';
@@ -22,7 +22,7 @@ export function profiles(app) {
     const ch = getCharacter(p.animal);
     grid.append(h('button.pick-card', {
       type: 'button', 'aria-label': `${ch.name}, ${t('color.' + p.color)}`,
-      onclick: () => { app.store.setActive(p.id); speech.say(ch.name, ch.voiceStyle); app.go('map'); },
+      onclick: () => { app.store.setActive(p.id); speech.say(ch.name, ch.voiceStyle); app.go('home'); },
     }, profileBadge(p)));
   }
   if (app.store.canAddProfile()) {
@@ -30,7 +30,6 @@ export function profiles(app) {
   }
   const el = h('div.screen.menu',
     {},
-    logo('enrich', 'logo-corner'),
     h('h1.title', {}, h('span.title-icon', { html: icons.home }), t('pick.profile')),
     grid);
   speech.say(t('pick.profile'));

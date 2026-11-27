@@ -7,10 +7,14 @@ export function distractorCandidates(q) {
   const plausible = [];
   if (q.form === 'count') {
     plausible.push(n + 2, n - 2);
-  } else if (q.form === 'result') {
+  } else if (q.form === 'result' || q.form === 'make-ten' || q.form === 'sub-across') {
     plausible.push(q.op === '+' ? q.a - q.b : q.a + q.b); // used the wrong operation
     plausible.push(q.a, q.b);                              // picked an operand
     plausible.push(n + 2, n - 2);
+  } else if (q.form === 'chain') {
+    plausible.push(q.a + q.b, q.a + q.b + q.d, q.a - q.b + q.d, n + 2, n - 2); // stopped early / wrong sign
+  } else if (q.form === 'missing-a') {
+    plausible.push(q.c, q.b, q.op === '+' ? q.b + q.c : q.c - q.b, n + 2, n - 2);
   } else {
     // missing-number / bonds: the common slip is answering with the total or the other part
     plausible.push(q.c, q.a, q.op === '+' ? q.a + q.c : q.a - q.c, n + 2, n - 2);
@@ -37,8 +41,9 @@ export function makeDistractors(q, rng, { min = 0, max = 10, count = 2 } = {}) {
   return out.slice(0, count);
 }
 
-/** Builds the 3 gate values in shuffled lane order. */
+/** Builds the 3 gate values in shuffled lane order. Choice questions (compare, pick-expr) bring their own. */
 export function makeGateValues(q, rng, range) {
+  if (q.choices) return q.form === 'compare' ? q.choices.slice() : rng.shuffle(q.choices);
   const wrong = makeDistractors(q, rng, range);
   return rng.shuffle([q.answer, ...wrong]);
 }

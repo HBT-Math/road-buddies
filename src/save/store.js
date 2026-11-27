@@ -9,6 +9,9 @@ const VERSION = 1;
 export const defaultSettings = () => ({
   sound: true, volume: 0.7, voice: true, music: true,
   calm: false, reducedMotion: false, highContrast: false, lang: 'en',
+  presentsVoice: true,   // "Rayhan School presents" spoken softly on the opening
+  twoPlayers: false,     // Race: two children take turns on one tablet
+  hardTimer: false,      // Race on Hard only: optional timer
 });
 
 export const emptyState = () => ({ version: VERSION, settings: defaultSettings(), profiles: [], activeId: null });
@@ -42,7 +45,7 @@ export function createStore(storage = globalThis.localStorage) {
 
     addProfile({ animal, color, theme, pack = 'pack1' }) {
       if (state.profiles.length >= MAX_PROFILES) return null;
-      const p = { id: `p${Date.now().toString(36)}${Math.floor(Math.random() * 1e4)}`, animal, color, theme, pack, progress: {}, skills: {}, rewards: 0 };
+      const p = { id: `p${Date.now().toString(36)}${Math.floor(Math.random() * 1e4)}`, animal, color, theme, pack, progress: {}, skills: {}, rewards: 0, games: {}, gameLevel: {}, stickers: [] };
       state.profiles.push(p);
       state.activeId = p.id;
       persist();
@@ -94,16 +97,41 @@ export function createStore(storage = globalThis.localStorage) {
       persist();
     },
 
+    /** Hub games: best stars per game / difficulty / step. */
+    recordGame(id, gameId, diffId, step, { stars }) {
+      const p = state.profiles.find((x) => x.id === id);
+      if (!p) return;
+      const g = ((p.games ||= {})[gameId] ||= {});
+      const d = (g[diffId] ||= {});
+      const s = (d[step] ||= { stars: 0, plays: 0 });
+      s.stars = Math.max(s.stars, stars);
+      s.plays++;
+      persist();
+    },
+    setGameLevel(id, gameId, diffId) {
+      const p = state.profiles.find((x) => x.id === id);
+      if (p) { (p.gameLevel ||= {})[gameId] = diffId; persist(); }
+    },
+    addSticker(id, sticker) {
+      const p = state.profiles.find((x) => x.id === id);
+      if (p && !(p.stickers ||= []).includes(sticker)) { p.stickers.push(sticker); persist(); return true; }
+      return false;
+    },
+
     resetProgress(id) {
       const p = state.profiles.find((x) => x.id === id);
-      if (p) { p.progress = {}; p.skills = {}; p.rewards = 0; delete p.placement; p.unlockAll = false; persist(); }
+      if (p) { p.progress = {}; p.skills = {}; p.rewards = 0; delete p.placement; p.unlockAll = false; p.games = {}; p.stickers = []; persist(); }
     },
   };
 }
 
+// Animals that were replaced keep the player's progress under a new buddy.
+export const ANIMAL_RENAMES = { frog: 'panda', cat: 'penguin', bunny: 'sheep', fox: 'giraffe' };
+
 export function migrate(s) {
   if (!s || typeof s !== 'object' || !Array.isArray(s.profiles)) return emptyState();
-  return { ...emptyState(), ...s, settings: { ...defaultSettings(), ...(s.settings || {}) }, version: VERSION };
+  const profiles = s.profiles.map((p) => ({ games: {}, gameLevel: {}, stickers: [], ...p, animal: ANIMAL_RENAMES[p.animal] || p.animal }));
+  return { ...emptyState(), ...s, profiles, settings: { ...defaultSettings(), ...(s.settings || {}) }, version: VERSION };
 }
 
 /** A world is playable when it is the first one or the previous one has been finished. */
@@ -114,3 +142,11 @@ export function isWorldUnlocked(profile, pack, index) {
 }
 
 export const worldStars = (profile, packId, worldId) => profile?.progress?.[packId]?.[worldId]?.stars ?? 0;
+
+export const gameLevel = (profile, gameId) => profile?.gameLevel?.[gameId] || 'easy';
+export const gameStars = (profile, gameId, diffId, step) => profile?.games?.[gameId]?.[diffId]?.[step]?.stars ?? 0;
+/** Step 0 is always open; each later step needs `need` stars on the step before (or unlock-all). */
+export function isStepUnlocked(profile, gameId, diffId, step, need = 1) {
+  if (step === 0 || profile?.unlockAll) return true;
+  return gameStars(profile, gameId, diffId, step - 1) >= need;
+}

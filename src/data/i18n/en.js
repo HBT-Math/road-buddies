@@ -32,8 +32,8 @@ export default {
   'color.red': 'Red', 'color.orange': 'Orange', 'color.yellow': 'Yellow',
   'color.green': 'Green', 'color.blue': 'Blue', 'color.purple': 'Purple',
 
-  'animal.hippo': 'Hippo', 'animal.bear': 'Bear', 'animal.frog': 'Frog',
-  'animal.cat': 'Cat', 'animal.bunny': 'Bunny', 'animal.fox': 'Fox',
+  'animal.hippo': 'Hippo', 'animal.bear': 'Bear', 'animal.panda': 'Panda',
+  'animal.penguin': 'Penguin', 'animal.sheep': 'Sheep', 'animal.giraffe': 'Giraffe',
 
   'speak.count': 'How many dots?',
   'speak.add': '{a} plus {b} equals what?',
@@ -104,6 +104,21 @@ export default {
   'adult.general': 'Game settings',
   'adult.about': 'About',
   'adult.privacy': 'No accounts, no internet, no ads, no tracking. Progress is saved only on this device.',
+
+  'presents.school': 'Rayhan School presents',
+  'presents.enrich': 'Enrich Program',
+  'hub.pick': 'Pick a game!',
+  'hub.soon': 'Coming soon',
+  'game.roadBuddies': 'Road Buddies',
+  'game.race': 'Race',
+  'game.maze': 'Maze',
+  'game.colorByCode': 'Color by Code',
+  'level.easy': 'Easy',
+  'level.medium': 'Medium',
+  'level.hard': 'Hard',
+  'level.step': 'Step {n}',
+  'adult.gameLevels': 'Game levels',
+  'adult.presentsVoice': 'Say "Rayhan School presents" at the start',
 
   'result.title': 'World complete!',
   'result.placement': 'Great driving!',

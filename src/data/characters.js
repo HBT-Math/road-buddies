@@ -38,70 +38,69 @@ export const characters = [
       ${smile('M52 85 Q60 92 68 85')}`,
   },
   {
-    id: 'frog', name: 'Fiona',
-    colors: { main: '#6CC46E', light: '#B9E8A6', dark: '#3E8E45' },
-    voiceStyle: { pitch: 1.3, rate: 1.0 },
-    cheerLines: ['cheer.wow', 'cheer.yay', 'cheer.super'],
+    id: 'panda', name: 'Pandy',
+    colors: { main: '#FFFFFF', light: '#F1F1F4', dark: '#2E2B3A', limbs: '#2E2B3A' },
+    voiceStyle: { pitch: 1.2, rate: 0.95 },
+    cheerLines: ['cheer.yay', 'cheer.super', 'cheer.youGotIt'],
     head: (c) => `
-      <circle cx="36" cy="36" r="19" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
-      <circle cx="84" cy="36" r="19" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
-      <ellipse cx="60" cy="72" rx="50" ry="36" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
-      <ellipse cx="60" cy="86" rx="34" ry="18" fill="${c.light}"/>
-      <circle cx="36" cy="36" r="13" fill="#fff"/><circle cx="84" cy="36" r="13" fill="#fff"/>
-      <circle cx="38" cy="38" r="6.5" fill="#2B2140"/><circle cx="86" cy="38" r="6.5" fill="#2B2140"/>
-      <circle cx="40" cy="35" r="2.2" fill="#fff"/><circle cx="88" cy="35" r="2.2" fill="#fff"/>
-      <circle cx="54" cy="64" r="2" fill="${c.dark}"/><circle cx="66" cy="64" r="2" fill="${c.dark}"/>
-      ${cheeks(78, 36)}
-      ${smile('M34 78 Q60 102 86 78', 3.5)}`,
+      <circle cx="28" cy="28" r="15" fill="${c.dark}"/>
+      <circle cx="92" cy="28" r="15" fill="${c.dark}"/>
+      <circle cx="60" cy="64" r="44" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
+      <ellipse cx="42" cy="58" rx="12" ry="15" transform="rotate(25 42 58)" fill="${c.dark}"/>
+      <ellipse cx="78" cy="58" rx="12" ry="15" transform="rotate(-25 78 58)" fill="${c.dark}"/>
+      <circle cx="43" cy="57" r="6.5" fill="#fff"/><circle cx="77" cy="57" r="6.5" fill="#fff"/>
+      <circle cx="44" cy="58" r="3.6" fill="${c.dark}"/><circle cx="78" cy="58" r="3.6" fill="${c.dark}"/>
+      <circle cx="45" cy="56" r="1.4" fill="#fff"/><circle cx="79" cy="56" r="1.4" fill="#fff"/>
+      ${cheeks(80, 30)}
+      <ellipse cx="60" cy="76" rx="8" ry="5.5" fill="${c.dark}"/>
+      ${smile('M52 86 Q60 93 68 86')}`,
   },
   {
-    id: 'cat', name: 'Kiki',
-    colors: { main: '#F2A65A', light: '#FCE1C0', dark: '#B56E2A' },
-    voiceStyle: { pitch: 1.4, rate: 1.05 },
-    cheerLines: ['cheer.yay', 'cheer.youGotIt', 'cheer.wow'],
+    id: 'penguin', name: 'Pingo',
+    colors: { main: '#3D4F7A', light: '#FFFFFF', dark: '#222C47', feet: '#F7A531' },
+    voiceStyle: { pitch: 1.35, rate: 1.05 },
+    cheerLines: ['cheer.wow', 'cheer.hooray', 'cheer.great'],
     head: (c) => `
-      <path d="M22 52 L28 10 L58 32 Z" fill="${c.main}" stroke="${c.dark}" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M98 52 L92 10 L62 32 Z" fill="${c.main}" stroke="${c.dark}" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M30 40 L32 20 L46 32 Z" fill="#F7A8C0"/><path d="M90 40 L88 20 L74 32 Z" fill="#F7A8C0"/>
-      <circle cx="60" cy="64" r="42" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
-      <ellipse cx="60" cy="84" rx="24" ry="16" fill="${c.light}"/>
-      ${eye(45, 58)}${eye(75, 58)}${cheeks(78, 30)}
-      <path d="M54 72 L66 72 L60 79 Z" fill="#F27B9B" stroke="#C4506F" stroke-width="1.5" stroke-linejoin="round"/>
-      ${smile('M60 79 Q55 87 48 83 M60 79 Q65 87 72 83', 2.5)}
-      <g stroke="${c.dark}" stroke-width="2" stroke-linecap="round">
-        <path d="M30 74 L10 70 M30 80 L10 84 M90 74 L110 70 M90 80 L110 84"/></g>`,
+      <circle cx="60" cy="62" r="46" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
+      <path d="M60 40 C48 26 22 34 24 62 C26 90 46 104 60 104 C74 104 94 90 96 62 C98 34 72 26 60 40 Z" fill="${c.light}"/>
+      ${eye(45, 60)}${eye(75, 60)}${cheeks(80, 30)}
+      <path d="M50 74 L70 74 L60 88 Z" fill="#F7A531" stroke="#C97A12" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M53 79 L67 79" stroke="#C97A12" stroke-width="2"/>`,
   },
   {
-    id: 'bunny', name: 'Benny',
-    colors: { main: '#F3F0F8', light: '#FFFFFF', dark: '#A89CC0' },
-    voiceStyle: { pitch: 1.5, rate: 1.1 },
-    cheerLines: ['cheer.hooray', 'cheer.great', 'cheer.yay'],
+    id: 'sheep', name: 'Sunny',
+    colors: { main: '#FFFFFF', light: '#F4E6D2', dark: '#9C8B78' },
+    voiceStyle: { pitch: 1.45, rate: 1.0 },
+    cheerLines: ['cheer.hooray', 'cheer.yay', 'cheer.super'],
     head: (c) => `
-      <ellipse cx="40" cy="32" rx="12" ry="28" transform="rotate(-12 40 32)" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
-      <ellipse cx="80" cy="32" rx="12" ry="28" transform="rotate(12 80 32)" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
-      <ellipse cx="40" cy="34" rx="5.5" ry="18" transform="rotate(-12 40 34)" fill="#F7A8C0"/>
-      <ellipse cx="80" cy="34" rx="5.5" ry="18" transform="rotate(12 80 34)" fill="#F7A8C0"/>
-      <circle cx="60" cy="72" r="40" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
-      ${eye(46, 66)}${eye(74, 66)}${cheeks(82, 28)}
-      <ellipse cx="60" cy="79" rx="6" ry="4.5" fill="#F27B9B"/>
-      ${smile('M60 83 Q55 90 49 87 M60 83 Q65 90 71 87', 2.5)}
-      <rect x="55" y="87" width="10" height="9" rx="2" fill="#fff" stroke="${c.dark}" stroke-width="1.5"/>
-      <path d="M60 87 V96" stroke="${c.dark}" stroke-width="1.2"/>`,
+      ${[[30, 34], [46, 22], [62, 18], [78, 22], [92, 36], [22, 52], [98, 54], [26, 72], [94, 72]]
+        .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="15" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>`).join('')}
+      ${[[46, 22], [62, 18], [78, 22], [30, 34], [92, 36]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="13" fill="${c.main}"/>`).join('')}
+      <ellipse cx="24" cy="60" rx="14" ry="7" transform="rotate(-25 24 60)" fill="${c.light}" stroke="${c.dark}" stroke-width="2.5"/>
+      <ellipse cx="96" cy="60" rx="14" ry="7" transform="rotate(25 96 60)" fill="${c.light}" stroke="${c.dark}" stroke-width="2.5"/>
+      <ellipse cx="60" cy="68" rx="32" ry="38" fill="${c.light}" stroke="${c.dark}" stroke-width="3"/>
+      <circle cx="44" cy="36" r="11" fill="${c.main}"/><circle cx="60" cy="32" r="12" fill="${c.main}"/><circle cx="76" cy="36" r="11" fill="${c.main}"/>
+      ${eye(48, 62)}${eye(72, 62)}${cheeks(80, 22)}
+      <path d="M54 82 Q60 86 66 82" fill="none" stroke="#6E5E50" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="60" cy="78" rx="5" ry="3.5" fill="#E58FA0"/>
+      ${smile('M53 92 Q60 97 67 92', 2.5)}`,
   },
   {
-    id: 'fox', name: 'Rosie',
-    colors: { main: '#EE7A3C', light: '#FFF4E6', dark: '#A64A1A' },
-    voiceStyle: { pitch: 1.15, rate: 1.0 },
-    cheerLines: ['cheer.super', 'cheer.wow', 'cheer.youGotIt'],
+    id: 'giraffe', name: 'Gigi',
+    colors: { main: '#F5C451', light: '#FCE7B4', dark: '#A8721F' },
+    voiceStyle: { pitch: 1.1, rate: 0.95 },
+    cheerLines: ['cheer.great', 'cheer.wow', 'cheer.youGotIt'],
     head: (c) => `
-      <path d="M20 50 L26 6 L56 30 Z" fill="${c.main}" stroke="${c.dark}" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M100 50 L94 6 L64 30 Z" fill="${c.main}" stroke="${c.dark}" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M29 38 L31 18 L45 30 Z" fill="#5A2E1A"/><path d="M91 38 L89 18 L75 30 Z" fill="#5A2E1A"/>
-      <circle cx="60" cy="62" r="42" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
-      <path d="M19 64 Q60 120 101 64 Q82 78 60 76 Q38 78 19 64 Z" fill="${c.light}"/>
-      ${eye(43, 54)}${eye(77, 54)}${cheeks(72, 32)}
-      <ellipse cx="60" cy="80" rx="7" ry="5.5" fill="#2B2140"/>
-      ${smile('M52 89 Q60 95 68 89')}`,
+      <path d="M44 30 L40 8 M76 30 L80 8" stroke="${c.dark}" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="40" cy="8" r="7" fill="#8A5A1C"/><circle cx="80" cy="8" r="7" fill="#8A5A1C"/>
+      <ellipse cx="20" cy="40" rx="14" ry="7" transform="rotate(-20 20 40)" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
+      <ellipse cx="100" cy="40" rx="14" ry="7" transform="rotate(20 100 40)" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
+      <ellipse cx="60" cy="60" rx="38" ry="46" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
+      <path d="M32 40 q6 -6 12 0 q-2 8 -10 6 z M82 34 q8 -4 12 4 q-6 6 -12 0 z M30 72 q6 -4 10 2 q-4 6 -10 2 z M86 70 q6 -2 8 4 q-6 4 -8 -4 z" fill="#D99A3A"/>
+      <ellipse cx="60" cy="86" rx="26" ry="18" fill="${c.light}" stroke="${c.dark}" stroke-width="2.5"/>
+      <ellipse cx="51" cy="82" rx="3" ry="4" fill="${c.dark}"/><ellipse cx="69" cy="82" rx="3" ry="4" fill="${c.dark}"/>
+      ${eye(45, 54)}${eye(75, 54)}${cheeks(70, 30)}
+      ${smile('M52 93 Q60 99 68 93', 2.5)}`,
   },
 ];
 
@@ -116,7 +115,7 @@ export function faceSvg(ch, size = 120) {
 export function bodySvg(ch, pose = 'idle', size = 120) {
   const c = ch.colors;
   const arm = (x, y, rot) =>
-    `<ellipse cx="${x}" cy="${y}" rx="9" ry="22" transform="rotate(${rot} ${x} ${y})" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>`;
+    `<ellipse cx="${x}" cy="${y}" rx="9" ry="22" transform="rotate(${rot} ${x} ${y})" fill="${c.limbs || c.main}" stroke="${c.dark}" stroke-width="3"/>`;
   const arms = {
     idle: arm(30, 142, 20) + arm(90, 142, -20),
     wave: arm(30, 142, 20) + arm(96, 112, -150),
@@ -124,7 +123,7 @@ export function bodySvg(ch, pose = 'idle', size = 120) {
     hold: arm(22, 116, 130) + arm(98, 116, -130),
   }[pose];
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 190" width="${size}" height="${(size * 190) / 120}" aria-hidden="true">
-    <ellipse cx="44" cy="180" rx="14" ry="8" fill="${c.dark}"/><ellipse cx="76" cy="180" rx="14" ry="8" fill="${c.dark}"/>
+    <ellipse cx="44" cy="180" rx="14" ry="8" fill="${c.feet || c.dark}"/><ellipse cx="76" cy="180" rx="14" ry="8" fill="${c.feet || c.dark}"/>
     <ellipse cx="60" cy="146" rx="34" ry="36" fill="${c.main}" stroke="${c.dark}" stroke-width="3"/>
     <ellipse cx="60" cy="152" rx="20" ry="22" fill="${c.light}"/>
     ${arms}

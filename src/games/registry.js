@@ -1,0 +1,20 @@
+import { gameArt } from './art.js';
+
+// Every game in the hub. Adding a game = one entry here plus its own folder; no other game changes.
+//   id:        save key for stars and level
+//   levels:    true -> uses the shared Easy / Medium / Hard config (data/difficulty.js) and the level picker
+//   ready:     false shows the card with a "coming soon" badge
+//   open(app): what happens when the card is tapped
+//   start(app, { difficulty, step }): starts a round (games with levels)
+export const games = [
+  { id: 'roadBuddies', nameKey: 'game.roadBuddies', art: gameArt.roadBuddies, ready: true, levels: false, open: (app) => app.go('map') },
+  { id: 'race', nameKey: 'game.race', art: gameArt.race, ready: false, levels: true },
+  { id: 'maze', nameKey: 'game.maze', art: gameArt.maze, ready: false, levels: true },
+  { id: 'colorByCode', nameKey: 'game.colorByCode', art: gameArt.colorByCode, ready: false, levels: true },
+];
+
+export const getGame = (id) => games.find((g) => g.id === id);
+export function openGame(app, game) {
+  if (game.levels) app.go('levels', { gameId: game.id });
+  else game.open(app);
+}

@@ -53,13 +53,14 @@ function buildOne(world, rng, level = 0) {
     }
     case 'result': {
       if (op === '+') {
-        const c = rng.int(Math.min(max, Math.max(2, lo + 1, floor)), max);
-        const bMin = Math.min(minPart, c - lo);
-        const a = rng.int(lo, c - bMin);
+        const aLo = Math.max(lo, world.minA || 0);  // e.g. Easy starts from 5 and up
+        const c = rng.int(Math.min(max, Math.max(2, aLo + 1, floor)), max);
+        const bMin = Math.min(minPart, c - aLo);
+        const a = rng.int(aLo, c - bMin);
         const b = c - a;
         return finish(world, { form, op, a, b, c, answer: c, tokens: [a, '+', b, '=', '?'] });
       }
-      const a = rng.int(Math.min(max, Math.max(lo, floor)), max);
+      const a = rng.int(Math.min(max, Math.max(lo, floor, world.minA || 0)), max);
       let b = rng.int(Math.min(minPart, a), a);
       // "n - n = 0" is useful now and then, but small numbers would make it very common
       if (b === a && a - 1 >= minPart && rng.next() < 0.6) b = rng.int(minPart, a - 1);
@@ -76,6 +77,75 @@ function buildOne(world, rng, level = 0) {
       const b = rng.int(1, a - 1);
       const c = a - b;
       return finish(world, { form, op, a, b, c, answer: b, tokens: [a, '-', '?', '=', c] });
+    }
+    case 'make-ten': {
+      // addition that crosses ten, e.g. 8 + 5 (the "make ten" strategy)
+      const aLo = Math.max(6, world.minA || 0);
+      const a = rng.int(Math.min(9, aLo), Math.min(9, max - 2));
+      const bLo = 11 - a;
+      const b = rng.int(bLo, Math.max(bLo, Math.min(9, max - a)));
+      return finish(world, { form, op: '+', a, b, c: a + b, answer: a + b, tokens: [a, '+', b, '=', '?'] });
+    }
+    case 'sub-across': {
+      // subtraction across ten, e.g. 15 - 7 (via 15 - 5 - 2)
+      const a = rng.int(11, Math.min(19, max));
+      const b = rng.int((a % 10) + 1, 9);
+      return finish(world, { form, op: '-', a, b, c: a - b, answer: a - b, tokens: [a, '-', b, '=', '?'] });
+    }
+    case 'missing-a': {
+      // ? + b = c   or   ? - b = c
+      if (op === '+') {
+        const c = rng.int(Math.min(max, Math.max(2, floor, world.minA || 0)), max);
+        const b = rng.int(1, c - 1);
+        return finish(world, { form, op, a: c - b, b, c, answer: c - b, tokens: ['?', '+', b, '=', c] });
+      }
+      const a = rng.int(Math.min(max, Math.max(2, floor, world.minA || 0)), max);
+      const b = rng.int(1, a - 1);
+      return finish(world, { form, op, a, b, c: a - b, answer: a, tokens: ['?', '-', b, '=', a - b] });
+    }
+    case 'chain': {
+      // three numbers: a + b - d  (every step stays inside the range and never below 0)
+      const a = rng.int(Math.max(lo, world.minA || 0), max - 1);
+      const b = rng.int(1, Math.min(9, max - a));
+      const d = rng.int(1, Math.min(9, a + b - 1));
+      const c = a + b - d;
+      return finish(world, { form, op: '+', op2: '-', a, b, d, c, answer: c, tokens: [a, '+', b, '-', d, '=', '?'] });
+    }
+    case 'compare': {
+      // which is bigger: 8 + 5 or 7 + 7?  (results close together; sometimes the same)
+      const expr = (target) => {
+        const plus = rng.next() < 0.7 || target >= max;
+        if (plus) { const x = rng.int(Math.max(1, target - 10), Math.min(10, target - 1)); return `${x} + ${target - x}`; }
+        const y = rng.int(1, Math.min(9, max - target)); return `${target + y} - ${y}`;
+      };
+      const r1 = rng.int(Math.max(4, floor), max);
+      // "the same" needs two different ways to write one number, so keep it below the very top
+      const same = r1 <= max - 3 && rng.next() < 0.25;
+      let r2 = same ? r1 : Math.max(3, Math.min(max, r1 + rng.pick([-2, -1, 1, 2])));
+      if (!same && r2 === r1) r2 = r1 - 1;
+      let left = expr(r1), right = expr(r2);
+      for (let i = 0; i < 10 && left === right; i++) right = expr(r2);
+      const answer = r1 === r2 ? '=' : r1 > r2 ? left : right;
+      return finish(world, { form, op: null, a: r1, b: r2, c: null, left, right, answer, choices: [left, '=', right], tokens: [left, '?', right] });
+    }
+    case 'pick-expr': {
+      // which one makes 12?  One expression equals the target, the others are off by one.
+      const t = rng.int(Math.min(max - 1, Math.max(4, floor, world.minA || 0)), max - 1);
+      const make = (target) => {
+        if (rng.next() < 0.65 || target >= max) { const x = rng.int(Math.max(1, target - 10), Math.min(10, target - 1)); return `${x} + ${target - x}`; }
+        const y = rng.int(1, Math.min(9, max - target)); return `${target + y} - ${y}`;
+      };
+      const answer = make(t);
+      const choices = [answer];
+      for (const off of rng.shuffle([1, -1, 2, -2])) {
+        if (choices.length === 3) break;
+        const v = t + off;
+        if (v < 2 || v > max) continue;
+        let e = make(v);
+        for (let i = 0; i < 6 && choices.includes(e); i++) e = make(v);
+        if (!choices.includes(e)) choices.push(e);
+      }
+      return finish(world, { form, op: null, a: t, b: null, c: t, answer, choices, tokens: ['?', '=', t] });
     }
     case 'bond': {
       const total = world.bondTotal ?? max;
@@ -100,6 +170,16 @@ export function fixedAt(world, i) {
 
 function finish(world, q) {
   q.skill = world.skill;
-  q.key = `${q.form}:${q.a}${q.op ?? ''}${q.b ?? ''}=${q.c}`;
+  q.key = q.choices
+    ? `${q.form}:${q.tokens.join(' ')}|${q.answer}`
+    : `${q.form}:${q.a}${q.op ?? ''}${q.b ?? ''}${q.d != null ? q.op2 + q.d : ''}=${q.c}`;
   return q;
+}
+
+/** Evaluate a display expression like "8 + 5" or "15 - 7" (only + and - with whole numbers). */
+export function evalExpr(str) {
+  const parts = String(str).split(' ');
+  let v = Number(parts[0]);
+  for (let i = 1; i < parts.length; i += 2) v = parts[i] === '+' ? v + Number(parts[i + 1]) : v - Number(parts[i + 1]);
+  return v;
 }

@@ -565,3 +565,23 @@ html.reduce-motion .bubble.show { animation: none !important; opacity: 1; }
 .race-result-main { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .race-results { gap: 1.6vh; }
 .race-results .medal { width: 80px; height: 80px; font-size: 30px; }
+@media (max-height: 520px) {
+  .race-results { justify-content: flex-start; padding: 8px 16px 12px; gap: 6px; }
+  .race-results .title { display: none; }
+  .race-results .cup-story { max-width: 58vw; margin-inline-end: 230px; }
+  .race-results .intro-bubble { font-size: 15px; padding: 6px 12px; }
+  .race-results .intro-face svg { width: 52px; height: 52px; }
+  .race-results .medal { width: 58px; height: 58px; font-size: 22px; }
+  .race-results .result-stars .star svg { width: 26px; height: 26px; }
+  .race-results .unlock canvas { width: 86px; }
+  .race-results .badge { width: 52px !important; height: 52px !important; }
+  .race-results .btn.big { min-width: 72px; min-height: 72px; }
+  .race-results .btn.big svg { width: 40px; height: 40px; }
+  .race-results .story-page { padding: 4px 12px; }
+  .race-results .story-art svg { width: 60px; height: 60px; }
+}
+@media (max-height: 520px) {
+  .race-results { padding-inline-end: 110px; }
+  .race-results .result-buttons { position: absolute; right: 14px; bottom: 12px; flex-direction: column; gap: 8px; }
+  .race-results .cup-story { margin-inline-end: 130px; }
+}

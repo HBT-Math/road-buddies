@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION whenever files change so devices pick up the update.
 // tests/pwa.test.js checks that every file under src/ and styles/ is listed in PRECACHE.
-const VERSION = 'rb-v6';
+const VERSION = 'rb-v7';
 const PRECACHE = [
   './',
   'index.html',

@@ -77,28 +77,37 @@ export function createRenderer(canvas, theme) {
       ctx.fillStyle = isHit && res.correct ? '#FFE066' : c.fill;
       ctx.strokeStyle = c.dark; ctx.lineWidth = Math.max(1.5, u * 0.03);
       rrect(ctx, l - u * 0.06, y - gh - u * 0.12, r - l + u * 0.12, u * 0.24, u * 0.08); ctx.fill(); ctx.stroke();
-      // number disc
+      // answer disc (numbers) or pill (expressions like "8 + 5")
       const dy = y - gh * 0.6;
       const rad = u * 0.34 * pulse * (isHit && !res.correct ? 0.92 : 1);
-      if (chosen) {
-        ctx.fillStyle = 'rgba(255,255,255,0.55)';
-        ctx.beginPath(); ctx.arc(x, dy, rad * 1.28, 0, Math.PI * 2); ctx.fill();
+      const label = String(g.values[i]);
+      const font = (px) => `800 ${Math.round(px)}px "Trebuchet MS", "Segoe UI", system-ui, sans-serif`;
+      let fontPx = rad * 1.25, halfW = rad;
+      if (label.length > 2) {
+        fontPx = rad * 0.82;
+        ctx.font = font(fontPx);
+        halfW = Math.min(u * 0.46, ctx.measureText(label).width / 2 + rad * 0.35);
+        const maxText = (halfW - rad * 0.25) * 2;
+        const wText = ctx.measureText(label).width;
+        if (wText > maxText) fontPx *= maxText / wText;
       }
-      ctx.fillStyle = '#FFFFFF';
-      ctx.strokeStyle = chosen ? '#2B2140' : c.dark;
-      ctx.lineWidth = Math.max(2, u * (chosen ? 0.075 : 0.05));
-      ctx.beginPath(); ctx.arc(x, dy, rad, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      const shape = (grow) => { ctx.beginPath(); ctx.roundRect(x - halfW * grow, dy - rad * grow, halfW * 2 * grow, rad * 2 * grow, rad * grow); };
+      if (chosen) { ctx.fillStyle = 'rgba(255,255,255,0.55)'; shape(1.28); ctx.fill(); }
+      ctx.fillStyle = g.reveal === i ? '#E3F8EC' : '#FFFFFF';
+      ctx.strokeStyle = g.reveal === i ? '#2F9E6B' : chosen ? '#2B2140' : c.dark;
+      ctx.lineWidth = Math.max(2, u * (chosen || g.reveal === i ? 0.075 : 0.05));
+      shape(1); ctx.fill(); ctx.stroke();
       ctx.fillStyle = '#2B2140';
-      ctx.font = `800 ${Math.round(rad * 1.25)}px "Trebuchet MS", "Segoe UI", system-ui, sans-serif`;
+      ctx.font = font(fontPx);
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(String(g.values[i]), x, dy + rad * 0.06);
+      ctx.fillText(label, x, dy + rad * 0.06);
       // "you are here" chevron on the road (shape, not only colour)
       if (chosen && holding) {
         const cy2 = y + u * 0.12;
         ctx.fillStyle = '#FFFFFF';
         ctx.beginPath(); ctx.moveTo(x - u * 0.16, cy2 + u * 0.12); ctx.lineTo(x, cy2); ctx.lineTo(x + u * 0.16, cy2 + u * 0.12); ctx.lineTo(x, cy2 + u * 0.06); ctx.closePath(); ctx.fill();
       }
-      hit.push({ lane: lx, x0: l - u * 0.1, x1: r + u * 0.1, y0: y - gh - u * 0.2, y1: y + u * 0.2, cx: x, cy: dy, r: rad });
+      hit.push({ lane: lx, x0: l - u * 0.1, x1: r + u * 0.1, y0: y - gh - u * 0.2, y1: y + u * 0.2, cx: x, cy: dy, r: rad, w: halfW });
     }
   }
 
@@ -139,14 +148,15 @@ export function createRenderer(canvas, theme) {
     resize,
     get size() { return { W, H }; },
     get car() { return carScreen; },
+    proj,
     hitTest(x, y) { return hit.find((b) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1)?.lane ?? null; },
     gateDisc(laneX) { return hit.find((b) => b.lane === laneX) || null; },
 
-    draw(s, { faceImg, accent, accentDark, friendImgs, reduced, effects }) {
+    draw(s, { faceImg, accent, accentDark, friendImgs, reduced, effects, sprites: sprites2, carExtra }) {
       const t = s.t;
       ctx.clearRect(0, 0, W, H);
       theme.background.sky(ctx, W, horizon, t, reduced, P);
-      theme.background.hills(ctx, W, horizon, -s.carX * 40);
+      theme.background.hills(ctx, W, horizon, -s.carX * 40, P);
       drawRoad(s);
 
       // collect sprites and draw far -> near
@@ -184,7 +194,10 @@ export function createRenderer(canvas, theme) {
         const bob = s.speed > 0.5 && !reduced ? Math.sin(t * 18) * 1.2 : 0;
         carScreen = { x: p.x, y: p.y, w };
         theme.vehicle(ctx, { x: p.x, y: p.y, w, accent, accentDark, faceImg, tilt, bob });
+        carExtra?.(ctx, { x: p.x, y: p.y + bob, w, tilt, t });
       } });
+      // game-specific sprites (e.g. rival cars) take part in the same far -> near sort
+      for (const sp of sprites2 || []) sprites.push({ d: sp.d, draw: () => sp.draw(ctx, proj, t) });
       sprites.sort((a, b) => b.d - a.d).forEach((sp) => sp.draw());
       effects?.draw(ctx);
     },

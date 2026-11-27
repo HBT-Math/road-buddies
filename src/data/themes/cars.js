@@ -45,7 +45,7 @@ export const carsTheme = {
         ctx.fill();
       });
     },
-    hills(ctx, w, horizon, shift) {
+    hills(ctx, w, horizon, shift, p = {}) {
       const layer = (color, amp, freq, phase, base) => {
         ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(0, horizon + 1);
         for (let x = 0; x <= w; x += 8) {
@@ -54,8 +54,8 @@ export const carsTheme = {
         }
         ctx.lineTo(w, horizon + 1); ctx.closePath(); ctx.fill();
       };
-      layer('#A8DCA0', horizon * 0.12, 0.006, 1.3, horizon * 0.02);
-      layer('#93D08A', horizon * 0.07, 0.011, 2.1, 0);
+      layer(p.hillA || '#A8DCA0', horizon * 0.12, 0.006, 1.3, horizon * 0.02);
+      layer(p.hillB || '#93D08A', horizon * 0.07, 0.011, 2.1, 0);
     },
   },
 

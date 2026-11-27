@@ -13,6 +13,9 @@ import { album } from './ui/screens/album.js';
 import { cupScreen } from './games/race/cupScreen.js';
 import { raceScreen } from './games/race/raceScreen.js';
 import { raceResults } from './games/race/raceResults.js';
+import { colorPick, colorScreen } from './games/colorByCode/colorScreen.js';
+import { albumSources } from './ui/screens/album.js';
+import { pictures, finishedSvg } from './games/colorByCode/pictures.js';
 import { profiles } from './ui/screens/profiles.js';
 import { newProfile } from './ui/screens/newProfile.js';
 import { map } from './ui/screens/map.js';
@@ -21,7 +24,7 @@ import { results } from './ui/screens/results.js';
 import { adult } from './ui/screens/adult.js';
 import { adultGate } from './ui/screens/adultGate.js';
 
-const screens = { presents, home, levels, album, raceCup: cupScreen, race: raceScreen, raceResults, profiles, newProfile, map, play, results, adult, adultGate };
+const screens = { presents, home, levels, album, raceCup: cupScreen, race: raceScreen, raceResults, colorPick, colorByCode: colorScreen, profiles, newProfile, map, play, results, adult, adultGate };
 const root = document.getElementById('app');
 const store = createStore();
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -39,7 +42,7 @@ const app = {
     current = { name, params, view };
     root.append(view.el);
     chrome.setVisible(view.chrome !== false);
-    if (!['play', 'race'].includes(name)) view.el.querySelector('button:not([hidden]), [tabindex]')?.focus({ preventScroll: true });
+    if (!['play', 'race', 'colorByCode'].includes(name)) view.el.querySelector('button:not([hidden]), [tabindex]')?.focus({ preventScroll: true });
     else document.activeElement?.blur?.();
     if (debug) window.roadBuddies.view = view;
   },
@@ -65,6 +68,9 @@ const app = {
     chrome.sync();
   },
 };
+
+// Finished Color by Code pictures appear in the sticker album.
+albumSources.push(() => pictures.map((p) => ({ id: `cbc:${p.id}`, title: p.name, art: finishedSvg(p), text: '' })));
 
 document.title = branding.pageTitle;
 setLanguage(store.settings.lang);

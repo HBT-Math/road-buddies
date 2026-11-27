@@ -11,7 +11,8 @@ export const games = [
   { id: 'race', nameKey: 'game.race', art: gameArt.race, ready: true, levels: true,
     start: (app, { difficulty, step }) => app.go('raceCup', { difficulty, step }) },
   { id: 'maze', nameKey: 'game.maze', art: gameArt.maze, ready: false, levels: true },
-  { id: 'colorByCode', nameKey: 'game.colorByCode', art: gameArt.colorByCode, ready: false, levels: true },
+  { id: 'colorByCode', nameKey: 'game.colorByCode', art: gameArt.colorByCode, ready: true, levels: true,
+    start: (app, { difficulty, step }) => app.go('colorPick', { difficulty, step }) },
 ];
 
 export const getGame = (id) => games.find((g) => g.id === id);

@@ -109,6 +109,17 @@ Each has 3 steps. A step unlocks with 1 star on the step before; an adult can se
   On Hard a grown-up can switch on a race clock (best times are saved).
 - Grown-ups can switch on **2 players**: children take turns on one tablet, each with their own stars.
 
+## Color by Code
+
+- Six original pictures in `src/games/colorByCode/pictures.js` (car, ice cream, flower, elephant, butterfly,
+  rocket), 2 per level step. Each region is plain SVG with a colour slot and a label position: add a picture
+  by adding an entry and listing it in `stepPictures`.
+- `coloring.js` (pure, tested) gives every colour its own answer number from the level's question types and
+  every region an equation with that answer.
+- Tap a part: a card shows the equation big with the crayons; pick the crayon with the answer. Or pick a
+  crayon first and tap every matching part. Wrong = a wobble; after 2 tries the right crayon glows.
+  Filled parts show their number, so colour is never the only clue. Finished pictures go into the sticker album.
+
 ## Add a character
 
 Add one entry to `src/data/characters.js`:

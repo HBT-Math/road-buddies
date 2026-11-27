@@ -23,6 +23,12 @@ export const stickerArt = {
     <path d="M70 56 H84 Q90 56 90 48 V40" stroke="#FFD43B" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="60" cy="26" r="8" fill="#FF8FAB"/><rect x="34" y="98" width="52" height="10" rx="4" fill="#E9B872"/>`, '#FFF1D6'),
   mountain: svg(`<path d="M8 102 L48 34 L66 62 L78 46 L112 102Z" fill="#8EA3B8" stroke="#2B2140" stroke-width="3" stroke-linejoin="round"/><path d="M38 52 L48 34 L58 52 L52 48 L46 54Z M72 54 L78 46 L84 56Z" fill="#fff"/>
     <path d="M48 34 V14" stroke="#2B2140" stroke-width="3"/><path d="M48 14 L64 19 L48 24Z" fill="#E63946"/>`, '#EAF6FF'),
+  mazeTrophy: (diff) => {
+    const c = { easy: ['#2F9E6B', '#D3F9D8'], medium: ['#E07A1F', '#FFF0DC'], hard: ['#8E5CD9', '#F0E8FF'] }[diff] || ['#2F9E6B', '#D3F9D8'];
+    return svg(`<rect x="22" y="22" width="76" height="76" rx="10" fill="#fff" stroke="${c[0]}" stroke-width="5"/>
+      <path d="M22 46 H62 M46 46 V74 M70 22 V58 H86 M46 74 H86 M98 74 H86 V86" stroke="${c[0]}" stroke-width="5" fill="none"/>
+      <circle cx="34" cy="34" r="7" fill="#FFD43B" stroke="#2B2140" stroke-width="2.5"/>${starPath(86, 98, 14, '#FFD43B')}`, c[1]);
+  },
   trophy: svg(`<path d="M40 26 H80 V48 Q80 72 60 74 Q40 72 40 48Z" fill="#FFD43B" stroke="#2B2140" stroke-width="3"/><path d="M40 32 H28 Q26 52 42 54 M80 32 H92 Q94 52 78 54" stroke="#2B2140" stroke-width="3" fill="none"/>
     <rect x="54" y="74" width="12" height="14" fill="#E59F00"/><rect x="40" y="88" width="40" height="12" rx="4" fill="#5B5070"/>${starPath(60, 46, 10, '#fff')}`),
 };

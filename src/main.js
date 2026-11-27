@@ -1,5 +1,5 @@
 import { createStore } from './save/store.js';
-import { setLanguage, getLanguage } from './data/i18n/index.js';
+import { setLanguage, getLanguage, t } from './data/i18n/index.js';
 import { getTheme } from './data/themes/index.js';
 import { branding } from './data/branding.js';
 import { sound } from './audio/sound.js';
@@ -14,6 +14,9 @@ import { cupScreen } from './games/race/cupScreen.js';
 import { raceScreen } from './games/race/raceScreen.js';
 import { raceResults } from './games/race/raceResults.js';
 import { colorPick, colorScreen } from './games/colorByCode/colorScreen.js';
+import { mazePick, mazeScreen } from './games/maze/mazeScreen.js';
+import { difficulties } from './data/difficulty.js';
+import { stickerArt } from './data/stickers.js';
 import { albumSources } from './ui/screens/album.js';
 import { pictures, finishedSvg } from './games/colorByCode/pictures.js';
 import { profiles } from './ui/screens/profiles.js';
@@ -24,7 +27,7 @@ import { results } from './ui/screens/results.js';
 import { adult } from './ui/screens/adult.js';
 import { adultGate } from './ui/screens/adultGate.js';
 
-const screens = { presents, home, levels, album, raceCup: cupScreen, race: raceScreen, raceResults, colorPick, colorByCode: colorScreen, profiles, newProfile, map, play, results, adult, adultGate };
+const screens = { presents, home, levels, album, raceCup: cupScreen, race: raceScreen, raceResults, colorPick, colorByCode: colorScreen, mazePick, maze: mazeScreen, profiles, newProfile, map, play, results, adult, adultGate };
 const root = document.getElementById('app');
 const store = createStore();
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -42,7 +45,7 @@ const app = {
     current = { name, params, view };
     root.append(view.el);
     chrome.setVisible(view.chrome !== false);
-    if (!['play', 'race', 'colorByCode'].includes(name)) view.el.querySelector('button:not([hidden]), [tabindex]')?.focus({ preventScroll: true });
+    if (!['play', 'race', 'colorByCode', 'maze'].includes(name)) view.el.querySelector('button:not([hidden]), [tabindex]')?.focus({ preventScroll: true });
     else document.activeElement?.blur?.();
     if (debug) window.roadBuddies.view = view;
   },
@@ -71,6 +74,8 @@ const app = {
 
 // Finished Color by Code pictures appear in the sticker album.
 albumSources.push(() => pictures.map((p) => ({ id: `cbc:${p.id}`, title: p.name, art: finishedSvg(p), text: '' })));
+// Maze trophies: one per difficulty and level step.
+albumSources.push(() => difficulties.flatMap((d) => [0, 1, 2].map((i) => ({ id: `maze:${d.id}-${i}`, title: `${t(d.nameKey)} ${t('game.maze')} ${i + 1}`, art: stickerArt.mazeTrophy(d.id), text: '' }))));
 
 document.title = branding.pageTitle;
 setLanguage(store.settings.lang);

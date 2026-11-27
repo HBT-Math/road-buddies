@@ -120,6 +120,19 @@ Each has 3 steps. A step unlocks with 1 star on the step before; an adult can se
   crayon first and tap every matching part. Wrong = a wobble; after 2 tries the right crayon glows.
   Filled parts show their number, so colour is never the only clue. Finished pictures go into the sticker album.
 
+## Maze
+
+Three kinds of maze, set per level step in `src/data/mazes.js` (2 mazes per step):
+
+- **Answer Path**: boxes with equations joined by roads with numbers. Solve your box, take the road with the answer.
+- **Number Chain**: number tiles; the sign says +3 / −2; go to the tile you land on.
+- **Target Tiles**: only drive on tiles that make the target number; on Hard the target changes at a flag tile.
+
+`src/games/maze/mazeGen.js` (pure, tested) builds every maze with exactly one way through. On Medium and Hard,
+Answer Path and Number Chain are answered with the number pad; Target Tiles are tapped. Arrow keys work too.
+A wrong move wobbles and the car backs up (no penalty). Finished level steps add a maze trophy to the album.
+Hard mazes are best on a tablet; on small phones the boards get small.
+
 ## Add a character
 
 Add one entry to `src/data/characters.js`:

@@ -1,4 +1,5 @@
-import { h, logo } from '../dom.js';
+import { h, logo, iconButton } from '../dom.js';
+import { icons } from '../icons.js';
 import { t } from '../../data/i18n/index.js';
 import { games, openGame } from '../../games/registry.js';
 import { profileBadge } from './profiles.js';
@@ -34,6 +35,7 @@ export function home(app) {
   const who = h('button.btn.who', { type: 'button', 'aria-label': t('pick.profile'), onclick: () => app.go('profiles') }, profileBadge(profile, 76));
   const el = h('div.screen.menu.home', {},
     who,
+    iconButton(icons.book, t('album.title'), () => app.go('album'), 'album-btn home-album'),
     grid,
     h('footer.home-footer', { 'aria-label': t('about.line') }, logo('school', 'logo-footer-school'), logo('enrich', 'logo-footer-enrich')));
   speech.say(t('hub.pick'));

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createStore, isWorldUnlocked, MAX_PROFILES, STORAGE_KEY, isStepUnlocked, gameStars, gameLevel } from '../src/save/store.js';
+import { createStore, isWorldUnlocked, MAX_PROFILES, STORAGE_KEY, isStepUnlocked, gameStars, gameLevel, isRoundUnlocked } from '../src/save/store.js';
 import { pack1 } from '../src/data/packs/pack1.js';
 
 const memStorage = () => {
@@ -90,4 +90,32 @@ test('old saves with replaced animals keep their progress', () => {
   assert.deepEqual(s.profiles().map((p) => p.animal), ['panda', 'giraffe', 'hippo']);
   assert.equal(s.profiles()[0].progress.pack1.p1w1.stars, 3);
   assert.deepEqual(s.profiles()[0].games, {});
+});
+
+test('race cups: 3 races, cup stars after all three, next cup unlocks', () => {
+  const s = createStore(memStorage());
+  const p = s.addProfile({ animal: 'sheep', color: 'red', theme: 'cars' });
+  assert.equal(isRoundUnlocked(p, 'race', 'easy', 0, 1), false);
+  assert.deepEqual(s.recordGameRound(p.id, 'race', 'easy', 0, 0, 3, 3), { stepDone: false, firstTimeDone: false });
+  assert.equal(isRoundUnlocked(p, 'race', 'easy', 0, 1), true);
+  s.recordGameRound(p.id, 'race', 'easy', 0, 1, 1, 3);
+  assert.equal(isStepUnlocked(p, 'race', 'easy', 1), false);
+  assert.deepEqual(s.recordGameRound(p.id, 'race', 'easy', 0, 2, 2, 3), { stepDone: true, firstTimeDone: true });
+  assert.equal(gameStars(p, 'race', 'easy', 0), 2);
+  assert.equal(isStepUnlocked(p, 'race', 'easy', 1), true);
+  assert.equal(s.recordGameRound(p.id, 'race', 'easy', 0, 2, 3, 3).firstTimeDone, false);
+});
+
+test('car extras and best times', () => {
+  const s = createStore(memStorage());
+  const p = s.addProfile({ animal: 'sheep', color: 'red', theme: 'cars' });
+  assert.equal(s.unlockExtra(p.id, 'spoiler'), true);
+  assert.equal(s.unlockExtra(p.id, 'spoiler'), false);
+  s.wearExtra(p.id, 'top', 'spoiler');
+  assert.equal(p.extras.worn.top, 'spoiler');
+  s.wearExtra(p.id, 'top', 'spoiler');
+  assert.equal(p.extras.worn.top, undefined, 'tapping again takes it off');
+  assert.equal(s.saveBestTime(p.id, 'k', 80.24), true);
+  assert.equal(s.saveBestTime(p.id, 'k', 90), false);
+  assert.equal(p.bestTimes.k, 80.2);
 });

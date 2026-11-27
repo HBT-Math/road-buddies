@@ -16,6 +16,8 @@ export const icons = {
   minus: S(`<path d="M9 24 H39" ${st} stroke-width="7"/>`),
   mixed: S(`<path d="M8 14 H24 M16 6 V22" ${st} stroke-width="5"/><path d="M26 34 H42" ${st} stroke-width="5"/><path d="M38 8 L10 40" ${st} stroke-width="3"/>`),
   bond: S(`<text x="24" y="33" text-anchor="middle" font-size="26" font-weight="800" font-family="Trebuchet MS, sans-serif" fill="currentColor">10</text><circle cx="24" cy="24" r="20" ${st} stroke-width="3.5"/>`),
+  book: S(`<path d="M24 12 Q14 6 6 9 V38 Q14 35 24 40 Q34 35 42 38 V9 Q34 6 24 12Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M24 12 V40" stroke="currentColor" stroke-width="4"/>`),
+  flagIcon: S(`<path d="M12 42 V6" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>${[0, 1, 2].map((r) => [0, 1, 2, 3].map((c) => `<rect x="${13 + c * 7}" y="${7 + r * 7}" width="7" height="7" fill="${(r + c) % 2 ? 'currentColor' : 'none'}"/>`).join('')).join('')}<rect x="13" y="7" width="28" height="21" fill="none" stroke="currentColor" stroke-width="2.5"/>`),
   lock: S(`<rect x="10" y="21" width="28" height="20" rx="5" fill="currentColor"/><path d="M16 21 V15 A8 8 0 0 1 32 15 V21" ${st}/>`),
   gear: S(`<circle cx="24" cy="24" r="7" ${st} stroke-width="4"/><path d="M24 4 V10 M24 38 V44 M4 24 H10 M38 24 H44 M9.9 9.9 L14.1 14.1 M33.9 33.9 L38.1 38.1 M9.9 38.1 L14.1 33.9 M33.9 14.1 L38.1 9.9" ${st} stroke-width="5"/>`),
   soundOn: S(`<path d="M8 18 H16 L26 9 V39 L16 30 H8Z" fill="currentColor"/><path d="M32 17 Q37 24 32 31 M36 12 Q45 24 36 36" ${st} stroke-width="4"/>`),

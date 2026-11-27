@@ -30,26 +30,48 @@ export function createSignboard({ frames = 1, onSpeak, onStep }) {
     },
     reveal(q) {
       const box = eq.querySelector('.q-box');
-      if (box) { box.textContent = String(q.answer); box.classList.add('solved'); }
+      if (box) { box.textContent = revealText(q); box.classList.add('solved'); }
     },
     setVisible(v) { el.classList.toggle('hidden', !v); },
   };
 }
 
 export function renderTokens(q) {
-  const sym = (x) => (x === '-' ? '−' : x);
+  const sym = (x) => String(x).replace(/-/g, '−');
   if (q.form === 'count') return `<span class="tok op">=</span><span class="tok q-box">?</span>`;
   return q.tokens.map((x) => (x === '?' ? '<span class="tok q-box">?</span>'
-    : typeof x === 'number' ? `<span class="tok num">${x}</span>` : `<span class="tok op">${sym(x)}</span>`)).join('');
+    : typeof x === 'number' ? `<span class="tok num">${x}</span>`
+    : String(x).length > 1 ? `<span class="tok expr">${sym(x)}</span>`   // a whole expression, e.g. "8 + 5"
+    : `<span class="tok op">${sym(x)}</span>`)).join('');
+}
+
+/** What fills the "?" box once solved (compare shows >, < or =). */
+export function revealText(q) {
+  if (q.form === 'compare') return q.answer === '=' ? '=' : q.answer === q.left ? '>' : '<';
+  return String(q.answer).replace(/-/g, '−');
 }
 
 /** What the speech engine says for a question. */
+const sayExpr = (e) => String(e).replace(/ \+ /g, ` ${t('speak.plus')} `).replace(/ - /g, ` ${t('speak.minus')} `);
+
 export function questionSpeech(q) {
-  if (q.form === 'count') return t('speak.count');
-  if (q.form === 'result') return t(q.op === '+' ? 'speak.add' : 'speak.sub', q);
-  return t(q.op === '+' ? 'speak.missingAdd' : 'speak.missingSub', q);
+  switch (q.form) {
+    case 'count': return t('speak.count');
+    case 'result': case 'make-ten': case 'sub-across': return t(q.op === '+' ? 'speak.add' : 'speak.sub', q);
+    case 'missing-a': return t(q.op === '+' ? 'speak.missingFirstAdd' : 'speak.missingFirstSub', q);
+    case 'chain': return t('speak.chain', q);
+    case 'compare': return t('speak.compare', { left: sayExpr(q.left), right: sayExpr(q.right) });
+    case 'pick-expr': return t('speak.pickExpr', { c: q.c });
+    default: return t(q.op === '+' ? 'speak.missingAdd' : 'speak.missingSub', q);
+  }
 }
 export function answerSpeech(q) {
-  if (q.form === 'count') return t('speak.answerCount', { n: q.answer });
-  return t(q.op === '+' ? 'speak.answerAdd' : 'speak.answerSub', q);
+  switch (q.form) {
+    case 'count': return t('speak.answerCount', { n: q.answer });
+    case 'missing-a': return t(q.op === '+' ? 'speak.answerAdd' : 'speak.answerSub', { a: q.answer, b: q.b, c: q.c });
+    case 'chain': return t('speak.answerChain', q);
+    case 'compare': return q.answer === '=' ? t('speak.answerSame') : t('speak.answerBigger', { e: sayExpr(q.answer) });
+    case 'pick-expr': return t('speak.answerPick', { e: sayExpr(q.answer), c: q.c });
+    default: return t(q.op === '+' ? 'speak.answerAdd' : 'speak.answerSub', q);
+  }
 }

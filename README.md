@@ -91,6 +91,21 @@ No other game needs to change.
 missing number) and Hard (within 20, subtraction across ten, chains like 8 + 5 − 3, compare, "which one makes 12").
 Each has 3 steps. A step unlocks with 1 star on the step before; an adult can set the level per game or unlock everything.
 
+## Race
+
+- **Rival cars** live in `src/data/racers.js`: name, colours, shape, voice, pace and their (always kind) lines.
+  They are fully original characters. Add one by adding an entry; use its id in a cup.
+- **Cups** live in `src/data/cups.js`: 3 per difficulty (one per level step), 3 races each, with a theme
+  (`sunny`, `desert`, `snow`), the 3 rivals, a story goal and a story page for the sticker album.
+- **Car extras** (spoiler, cap, crown...) live in `src/data/rewards.js`; one unlocks after every race.
+- **Rules** are in `src/games/race/raceWorld.js` (no DOM): Nitro Gates every few seconds, nitro charges
+  (3 right in a row = super nitro, Shift key or the NITRO button), a pit stop half way (pick the 2 tires
+  that make 10, or 20 on Hard), and rivals that adapt their speed so the race stays close.
+  `tests/race.test.js` simulates whole races to check it is never impossible and never boring.
+- On Easy and Medium the whole race slows down while a question is up; there is never a timer.
+  On Hard a grown-up can switch on a race clock (best times are saved).
+- Grown-ups can switch on **2 players**: children take turns on one tablet, each with their own stars.
+
 ## Add a character
 
 Add one entry to `src/data/characters.js`:

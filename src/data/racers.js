@@ -1,6 +1,6 @@
 // The talking rival cars. Fully original characters: edit names, colours, shapes and lines freely.
 // shape: 'zippy' (small and round) | 'sports' (low with a wing) | 'truck' (big and boxy)
-//        | 'bug' (tiny dome) | 'classic' (tall, round fenders, little flag)
+//        | 'bug' (tiny dome) | 'classic' (tall, round fenders, little flag) | 'racer' (long and low, tall tail fin)
 // pace:  how they drive. start / end multiply their speed early and late in the race.
 // lines: always kind. intro, cheer (you got nitro), passYou (they pass you), youPass (you pass them),
 //        win (they finish ahead), lose (you finish ahead). Spoken aloud and shown in bubbles.
@@ -13,7 +13,7 @@ export const racers = [
     catchphrase: 'Catch me if you can!',
     lines: {
       intro: ['Zoom zoom! I am the fastest little car in town!'],
-      cheer: ['Whoa, nitro! Not bad!', 'Hey, wait for me!'],
+      cheer: ['Whoa, nitro! Nice one!', 'Hey, wait for me!'],
       passYou: ['Catch me if you can!', 'Beep beep, coming through!'],
       youPass: ['Hey! How did you do that?', 'Wow, you are quick!'],
       win: ['Zoom! I won this time. Race me again!'],
@@ -78,6 +78,21 @@ export const racers = [
       youPass: ['Bravo! Fine driving!', 'Ha ha! Well done!'],
       win: ['A fine race! Practice makes perfect.'],
       lose: ['Splendid! You are a true racer!'],
+    },
+  },
+  {
+    id: 'blaze', name: 'Blaze', shape: 'racer',
+    color: '#F2607E', dark: '#B33A55', eyes: '#2B2140',
+    voiceStyle: { pitch: 1.05, rate: 1.05 },
+    pace: { start: 1.06, end: 1.03 },
+    catchphrase: 'Ready, steady, Blaze!',
+    lines: {
+      intro: ['Ready, steady, Blaze! I am the star of the track!'],
+      cheer: ['Now that is star-power nitro!', 'Ooh, you are shining today!'],
+      passYou: ['Ready, steady, Blaze!', 'Star racer coming through!'],
+      youPass: ['Whoa! You are a star racer too!', 'Hey, that was my move!'],
+      win: ['Star finish! But you raced like a champion.'],
+      lose: ['You beat the star of the track! Amazing!'],
     },
   },
 ];

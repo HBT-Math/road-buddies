@@ -8,7 +8,8 @@ import { gameArt } from './art.js';
 //   start(app, { difficulty, step }): starts a round (games with levels)
 export const games = [
   { id: 'roadBuddies', nameKey: 'game.roadBuddies', art: gameArt.roadBuddies, ready: true, levels: false, open: (app) => app.go('map') },
-  { id: 'race', nameKey: 'game.race', art: gameArt.race, ready: false, levels: true },
+  { id: 'race', nameKey: 'game.race', art: gameArt.race, ready: true, levels: true,
+    start: (app, { difficulty, step }) => app.go('raceCup', { difficulty, step }) },
   { id: 'maze', nameKey: 'game.maze', art: gameArt.maze, ready: false, levels: true },
   { id: 'colorByCode', nameKey: 'game.colorByCode', art: gameArt.colorByCode, ready: false, levels: true },
 ];

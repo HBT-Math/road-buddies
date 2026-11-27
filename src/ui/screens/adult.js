@@ -134,6 +134,8 @@ export function adult(app) {
       toggle(t('adult.reducedMotion'), s.reducedMotion, (v) => set({ reducedMotion: v })),
       toggle(t('adult.highContrast'), s.highContrast, (v) => set({ highContrast: v })),
       toggle(t('adult.presentsVoice'), s.presentsVoice, (v) => set({ presentsVoice: v })),
+      toggle(t('adult.twoPlayers'), s.twoPlayers, (v) => set({ twoPlayers: v })),
+      toggle(t('adult.hardTimer'), s.hardTimer, (v) => set({ hardTimer: v })),
       h('h3', {}, t('adult.language')), lang);
   }
 

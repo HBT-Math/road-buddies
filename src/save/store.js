@@ -108,6 +108,49 @@ export function createStore(storage = globalThis.localStorage) {
       s.plays++;
       persist();
     },
+    /**
+     * Games with several rounds per step (Race: 3 races per cup). Keeps the best stars per round;
+     * the step itself gets stars (rounded average) once every round has been played.
+     * Returns { stepDone, firstTimeDone }.
+     */
+    recordGameRound(id, gameId, diffId, step, round, stars, rounds) {
+      const p = state.profiles.find((x) => x.id === id);
+      if (!p) return { stepDone: false, firstTimeDone: false };
+      const d = (((p.games ||= {})[gameId] ||= {})[diffId] ||= {});
+      const s = (d[step] ||= { stars: 0, plays: 0 });
+      s.rounds ||= [];
+      s.rounds[round] = Math.max(s.rounds[round] || 0, stars);
+      s.plays++;
+      const played = Array.from({ length: rounds }, (_, i) => s.rounds[i] || 0);
+      const stepDone = played.every((x) => x > 0);
+      const firstTimeDone = stepDone && !s.done;
+      if (stepDone) { s.done = true; s.stars = Math.max(s.stars, Math.round(played.reduce((a, b) => a + b, 0) / rounds)); }
+      persist();
+      return { stepDone, firstTimeDone };
+    },
+    /** Car extras: unlock (returns true if new) and wear one per slot. */
+    unlockExtra(id, extraId) {
+      const p = state.profiles.find((x) => x.id === id);
+      if (!p) return false;
+      const ex = (p.extras ||= { owned: [], worn: {} });
+      if (ex.owned.includes(extraId)) return false;
+      ex.owned.push(extraId); persist(); return true;
+    },
+    wearExtra(id, slot, extraId) {
+      const p = state.profiles.find((x) => x.id === id);
+      if (!p) return;
+      const ex = (p.extras ||= { owned: [], worn: {} });
+      if (extraId && ex.worn[slot] !== extraId) ex.worn[slot] = extraId; else delete ex.worn[slot];
+      persist();
+    },
+    /** Best time per race key (Hard timer). Returns true for a new best. */
+    saveBestTime(id, key, seconds) {
+      const p = state.profiles.find((x) => x.id === id);
+      if (!p) return false;
+      const b = (p.bestTimes ||= {});
+      if (b[key] && b[key] <= seconds) return false;
+      b[key] = Math.round(seconds * 10) / 10; persist(); return true;
+    },
     setGameLevel(id, gameId, diffId) {
       const p = state.profiles.find((x) => x.id === id);
       if (p) { (p.gameLevel ||= {})[gameId] = diffId; persist(); }
@@ -150,3 +193,6 @@ export function isStepUnlocked(profile, gameId, diffId, step, need = 1) {
   if (step === 0 || profile?.unlockAll) return true;
   return gameStars(profile, gameId, diffId, step - 1) >= need;
 }
+export const roundStars = (profile, gameId, diffId, step, round) => profile?.games?.[gameId]?.[diffId]?.[step]?.rounds?.[round] ?? 0;
+/** Round 0 is always open; later rounds open once the round before has been played. */
+export const isRoundUnlocked = (profile, gameId, diffId, step, round) => round === 0 || profile?.unlockAll || roundStars(profile, gameId, diffId, step, round - 1) > 0;
